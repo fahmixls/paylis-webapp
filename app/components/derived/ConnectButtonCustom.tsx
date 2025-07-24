@@ -1,5 +1,6 @@
 import { ConnectButton } from "@xellar/kit";
 import { Wallet2 } from "lucide-react";
+import { shortenAddress } from "~/lib/utils";
 
 export default function ConnectButtonCustom() {
   return (
@@ -10,11 +11,11 @@ export default function ConnectButtonCustom() {
         return (
           <div>
             <button
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-wp font-semibold shadow hover:bg-sky-50 transition"
+              className="inline-flex items-center gap-2 px-3 py-3 rounded-lg bg-white text-wp font-semibold hover:bg-sky-50 transition"
               onClick={isConnected ? openProfileModal : openConnectModal}
             >
               <Wallet2 className="size-4" />
-              {isConnected ? address : "Connect"}
+              {isConnected ? shortenAddress(address) : "Connect"}
             </button>
           </div>
         );

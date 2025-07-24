@@ -36,7 +36,7 @@ const MenuAside = ({
         <button
           type="button"
           onClick={() => setOpen(!isOpen)}
-          className="inline-flex absolute right-3 top-3 items-center justify-center p-2 bg-transparent hover:bg-white/10 text-slate-800 rounded-md hover:ring-indigo-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex absolute right-3 top-3 items-center justify-center p-2 bg-transparent hover:bg-white/10 text-wp rounded-md hover:ring-indigo-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           aria-label="Toggle navigation menu"
           aria-controls="mobile-menu"
           aria-expanded={isOpen}
@@ -51,11 +51,11 @@ const MenuAside = ({
         <h2 id="menu-heading" className="sr-only">
           Main menu
         </h2>
-        <ul className="space-y-2">
+        <ul className="space-y-2 text-wp">
           <li>
             <a
               href="/"
-              className="block px-3 py-2 rounded hover:bg-gray-200 text-gray-800 font-medium"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
               Home
             </a>
@@ -63,7 +63,7 @@ const MenuAside = ({
           <li>
             <a
               href="/about"
-              className="block px-3 py-2 rounded hover:bg-gray-200 text-gray-800 font-medium"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
               About
             </a>
@@ -71,7 +71,7 @@ const MenuAside = ({
           <li>
             <a
               href="/dashboard"
-              className="block px-3 py-2 rounded hover:bg-gray-200 text-gray-800 font-medium"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
               Dashboard
             </a>
@@ -79,7 +79,7 @@ const MenuAside = ({
           <li>
             <a
               href="/docs"
-              className="block px-3 py-2 rounded hover:bg-gray-200 text-gray-800 font-medium"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
               Docs
             </a>
@@ -90,7 +90,7 @@ const MenuAside = ({
   );
 };
 
-const HeaderSection = () => {
+const Header = () => {
   const [isOpen, setOpen] = useState(false);
 
   return (
@@ -102,7 +102,7 @@ const HeaderSection = () => {
         Skip to content
       </a>
       <header
-        className="flex items-center justify-between px-6 py-4 max-h-20 text-wp shadow-sm bg-primary relative z-50"
+        className="flex items-center justify-between px-6 py-4 max-h-20 text-wp shadow-sm bg-white relative z-50"
         role="banner"
       >
         <button
@@ -123,4 +123,4 @@ const HeaderSection = () => {
   );
 };
 
-export default HeaderSection;
+export default Header;

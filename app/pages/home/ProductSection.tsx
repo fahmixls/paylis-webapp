@@ -14,6 +14,7 @@ export default function ProductSection() {
         "Seamlessly accept stablecoin payments on your WooCommerce store. Fast, secure, and borderless.",
       icon: <ShoppingCart className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Install Plugin",
+      href: "/dashboard",
     },
     {
       title: "Easy Digital Downloads Plugin",
@@ -21,6 +22,7 @@ export default function ProductSection() {
         "Enable crypto payments for digital products with stablecoins. No volatility, no friction.",
       icon: <Store className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Get Extension",
+      href: "/dashboard",
     },
     {
       title: "Creator Tipping Platform",
@@ -28,6 +30,7 @@ export default function ProductSection() {
         "Let your fans tip using stablecoins. Perfect for creators, streamers, and educators.",
       icon: <DollarSign className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Start Earning",
+      href: "/dashboard",
     },
     {
       title: "API and SDK Integration",
@@ -35,6 +38,7 @@ export default function ProductSection() {
         "Integrate stablecoin payments into any platform using our secure REST API and developer-friendly SDK.",
       icon: <Wallet className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "View Docs",
+      href: "/dashboard",
     },
   ];
 
@@ -83,13 +87,14 @@ export default function ProductSection() {
                 <p className="text-base text-slate-600 mb-6">
                   {product.description}
                 </p>
-                <button
+                <a
                   className="inline-flex items-center gap-1 text-wp font-medium hover:underline focus:outline-none focus-visible:ring focus-visible:ring-offset-2 focus-visible:ring-wp"
                   aria-label={`${product.cta} for ${product.title}`}
+                  href={product.href}
                 >
                   {product.cta}{" "}
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
+                </a>
               </article>
             </li>
           ))}
