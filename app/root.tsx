@@ -11,11 +11,16 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Providers } from "./providers";
-import HeaderSection from "./components/derived/Header";
 import { ArrowLeft } from "lucide-react";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "Paylis" },
+  { title: "Paylis – Stablecoin Payment Gateway on Lisk" },
+  {
+    name: "description",
+    content:
+      "Paylis is a fast, secure, and user-friendly payment gateway that enables stablecoin transactions on the Lisk network.",
+  },
 ];
 
 export const links: Route.LinksFunction = () => [
@@ -65,10 +70,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <div className="-z-50 pattern-bg absolute left-0 top-0 h-full w-full" />
         <Providers>
           <main className="w-full max-w-screen-sm relative mx-auto min-h-screen bg-slate-50 shadow-md">
-            <HeaderSection />
-            <div className="w-full h-full p-3">{children}</div>
+            {children}
           </main>
         </Providers>
         <ScrollRestoration />
@@ -113,7 +118,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       )}
       <a
         href="/"
-        className="inline-flex mt-7 items-center gap-2 px-6 py-3 rounded-lg bg-wp text-white font-semibold shadow hover:bg-blue-700 transition"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Homepage

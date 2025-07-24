@@ -1,6 +1,7 @@
-import { Menu, SidebarClose, X } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
+import ConnectButtonCustom from "./ConnectButtonCustom";
 
 const MenuAside = ({
   isOpen,
@@ -24,23 +25,28 @@ const MenuAside = ({
       aria-modal="true"
       aria-labelledby="menu-heading"
       className={cn(
-        "transition-all duration-500 shadow-lg ease-in-out w-full max-w-screen-sm h-full fixed left-auto z-50 top-0 flex justify-end",
-        isOpen ? "translate-x-0 bg-black/20" : `translate-x-full`,
+        "transition-all duration-300 shadow-lg ease-in w-[18rem] h-full fixed left-auto z-50 top-0 flex justify-start",
+        isOpen ? "translate-x-0 " : `-translate-x-[18rem]`,
       )}
     >
       <nav
-        className="w-full h-full relative max-w-[16rem] bg-white p-3 pt-20 border-r border-gray-300"
+        className="w-[18rem] h-full relative bg-white p-3 pt-20 border-r border-gray-300"
         aria-label="Main navigation"
       >
         <button
           type="button"
-          onClick={() => setOpen(false)}
-          className="inline-flex absolute left-3 top-3 items-center justify-center p-2 bg-transparent hover:bg-white/10 text-slate-800 rounded-md hover:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          onClick={() => setOpen(!isOpen)}
+          className="inline-flex absolute right-3 top-3 items-center justify-center p-2 bg-transparent hover:bg-white/10 text-slate-800 rounded-md hover:ring-indigo-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           aria-label="Toggle navigation menu"
           aria-controls="mobile-menu"
           aria-expanded={isOpen}
         >
-          <X className="size-10" aria-hidden="true" />
+          <span className="sr-only">Open/close side menu</span>
+          {!isOpen ? (
+            <ChevronRight className="size-10" aria-hidden="true" />
+          ) : (
+            <X className="size-10" aria-hidden="true" />
+          )}
         </button>
         <h2 id="menu-heading" className="sr-only">
           Main menu
@@ -96,17 +102,9 @@ const HeaderSection = () => {
         Skip to content
       </a>
       <header
-        className="flex items-center justify-between px-6 py-4 max-h-20 text-slate-700 shadow-sm bg-[#fefefe] relative z-50"
+        className="flex items-center justify-between px-6 py-4 max-h-20 text-wp shadow-sm bg-primary relative z-50"
         role="banner"
       >
-        <a
-          href="/"
-          className="text-2xl font-bold tracking-tight hover:text-indigo-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
-          aria-label="Paylis homepage"
-        >
-          Paylis
-        </a>
-
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
@@ -115,8 +113,9 @@ const HeaderSection = () => {
           aria-controls="mobile-menu"
           aria-expanded={isOpen}
         >
-          <Menu className="w-6 h-6" aria-hidden="true" />
+          <Menu className="size-8" aria-hidden="true" />
         </button>
+        <ConnectButtonCustom />
       </header>
 
       <MenuAside isOpen={isOpen} setOpen={setOpen} />
