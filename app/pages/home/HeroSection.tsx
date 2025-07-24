@@ -58,17 +58,17 @@ export default function HeroSection() {
           </span>{" "}
           simplified.
         </p>
-        <div className="flex flex-wrap gap-4 w-full justify-center pt-6">
+        <div className="flex sm:flex-row flex-col flex-wrap gap-4 w-fit mx-auto justify-center pt-6">
           <a
             href="#product-section"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+            className="inline-flex items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
           >
             <Rocket className="w-4 h-4" />
             Get Started
           </a>
           <a
             href="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-wp text-wp font-semibold hover:bg-sky-50 hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out"
+            className="inline-flex items-center gap-2 px-9 py-3 rounded-lg border border-wp text-wp font-semibold hover:bg-sky-50 hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out"
           >
             <MessagesSquare className="w-4 h-4" />
             Talk to Us

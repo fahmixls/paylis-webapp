@@ -29,6 +29,13 @@ export default function ProductSection() {
       icon: <DollarSign className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Start Earning",
     },
+    {
+      title: "API and SDK Integration",
+      description:
+        "Integrate stablecoin payments into any platform using our secure REST API and developer-friendly SDK.",
+      icon: <Wallet className="w-6 h-6 text-wp" aria-hidden="true" />,
+      cta: "View Docs",
+    },
   ];
 
   return (
@@ -43,13 +50,13 @@ export default function ProductSection() {
           id="products-heading"
           className="text-3xl md:text-4xl font-bold text-white mb-6"
         >
-          Our <span className="font-extrabold text-yellow-400">Stablecoin</span>{" "}
+          Our <span className="font-extrabold text-yellow-500">Stablecoin</span>{" "}
           Payment Solutions
         </h2>
         <p className="text-slate-50 mb-14 mx-auto text-lg">
           Accept fast and stable crypto payments across WordPress plugins and
           content creator tools.{" "}
-          <span className="font-extrabold text-yellow-400">
+          <span className="font-extrabold text-yellow-500">
             No volatility. No borders{" "}
           </span>
           .
@@ -68,7 +75,7 @@ export default function ProductSection() {
                   </div>
                   <h3
                     id={`product-title-${index}`}
-                    className="text-xl font-semibold text-slate-700"
+                    className="sm:text-xl text-lg font-semibold text-slate-700"
                   >
                     {product.title}
                   </h3>
