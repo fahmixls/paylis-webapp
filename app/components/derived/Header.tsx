@@ -117,14 +117,9 @@ const Header = () => {
           <Menu className="size-8" aria-hidden="true" />
         </button>
         <div className="flex items-center space-x-2 text-base font-semibold text-wp">
-          <span
-            className={cn(
-              "h-3 w-3 rounded-full animate-pulse",
-              isConnected ? "bg-wp" : "bg-red-400",
-            )}
-          />
-          <span className={cn(isConnected ? "text-wp" : "text-red-600")}>
-            {isConnected ? shortenAddress(address!) : "No Wallet Connected"}
+          <span className="h-3 w-3 rounded-full animate-pulse bg-wp" />
+          <span className="text-red-600">
+            {isConnected ? shortenAddress(address!) : ""}
           </span>
         </div>
       </header>
