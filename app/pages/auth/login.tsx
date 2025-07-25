@@ -5,6 +5,7 @@ import { redirect } from "react-router";
 import type { Route } from "./+types/login";
 import { LogIn, RefreshCcw } from "lucide-react";
 import ConnectButtonCustom from "~/components/derived/ConnectButtonCustom";
+import Footer from "~/components/derived/Footer";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -36,23 +37,26 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function AuthLogin() {
   const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
   const { signMessage } = useSignMessage();
+  const { disconnect } = useDisconnect();
+
   const [nonce, setNonce] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
+  // Fetch nonce silently after wallet connects
   const fetchNonce = async () => {
-    if (!address) return;
-
     try {
       const response = await fetch("/api/auth/nonce", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ address }),
       });
+
       const data = await response.json();
       setNonce(data.nonce);
+      setCurrentStep(2);
     } catch {
       setError("Failed to fetch nonce");
     }
@@ -110,34 +114,65 @@ export default function AuthLogin() {
     }
   };
 
-  const { disconnect } = useDisconnect();
   const handleWalletChange = () => {
     disconnect();
+    setCurrentStep(1);
+    setNonce("");
+    setError("");
   };
 
+  const StepIndicator = ({ step, title }: { step: number; title: string }) => (
+    <div className="flex items-center space-x-2">
+      <div
+        className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+          currentStep >= step ? "bg-wp text-white" : "bg-gray-200 text-gray-500"
+        }`}
+      >
+        {step}
+      </div>
+      <span
+        className={`text-sm ${
+          currentStep >= step ? "text-wp" : "text-gray-400"
+        }`}
+      >
+        {title}
+      </span>
+    </div>
+  );
+
   return (
-    <div className="max-w-lg mx-auto px-6 py-12 text-center font-sans">
-      <h1 className="text-2xl font-bold text-wp mb-6">Sign In with Ethereum</h1>
+    <div className="max-w-lg h-[64vh] mx-auto px-6 py-12 text-center font-sans">
+      <div className="flex justify-between max-w-sm mx-auto mb-8">
+        <StepIndicator step={1} title="Connect Wallet" />
+        <StepIndicator step={2} title="Sign In" />
+      </div>
 
       {error && (
         <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded mb-4 text-left">
           {error}
         </div>
       )}
+      <div className="flex h-full items-center justify-center">
+        <div>
+          <h1 className="text-2xl font-bold text-wp mb-6">
+            Sign In with Ethereum
+          </h1>
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              <p className="text-gray-600 sr-only">
+                Step 1: Connect your wallet
+              </p>
+              <ConnectButtonCustom />
+            </div>
+          )}
 
-      {!isConnected ? (
-        <div className="space-y-4">
-          <p className="text-gray-600">Connect your wallet to sign in:</p>
-          <ConnectButtonCustom />
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <p className="text-wp">
-            ✅ Wallet connected:{" "}
-            <code className="bg-gray-100 px-2 py-1 rounded">{address}</code>
-          </p>
-          {nonce ? (
-            <div className="flex flex-col mt-8 items-center gap-3 sm:gap-4">
+          {currentStep === 2 && isConnected && nonce && (
+            <div className="flex flex-col mt-8 items-center gap-4">
+              <p className="text-wp sr-only">
+                ✅ Wallet connected:{" "}
+                <code className="bg-gray-100 px-2 py-1 rounded">{address}</code>
+              </p>
+
               <button
                 onClick={handleSignIn}
                 disabled={isLoading}
@@ -153,10 +188,11 @@ export default function AuthLogin() {
                 ) : (
                   <>
                     <LogIn className="w-5 h-5" />
-                    Sign in with Wallet
+                    Sign In
                   </>
                 )}
               </button>
+
               <button
                 onClick={handleWalletChange}
                 className="inline-flex justify-center items-center w-full max-w-xs gap-2 rounded-md px-8 py-3 text-base font-semibold border transition-all duration-200 ease-in-out
@@ -167,11 +203,12 @@ export default function AuthLogin() {
                 Switch Wallet
               </button>
             </div>
-          ) : (
-            <p className="text-gray-500">Loading challenge...</p>
           )}
         </div>
-      )}
+      </div>
+      <div className="absolute left-0 bottom-0 w-full flex justify-center">
+        <Footer />
+      </div>
     </div>
   );
 }

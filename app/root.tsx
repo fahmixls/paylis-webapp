@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
   type MetaFunction,
 } from "react-router";
 
@@ -61,6 +62,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "loading";
   return (
     <html lang="en">
       <head>
@@ -73,6 +76,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="-z-50 pattern-bg absolute left-0 top-0 h-full w-full" />
         <Providers>
           <main className="w-full max-w-screen-sm relative mx-auto min-h-screen bg-slate-50 shadow-md">
+            {isLoading && <GlobalSpinner />}
             {children}
           </main>
         </Providers>
@@ -124,5 +128,22 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         Back to Homepage
       </a>
     </main>
+  );
+}
+
+function GlobalSpinner() {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "4px",
+        backgroundColor: "#4f46e5",
+        animation: "loading-bar 1.2s infinite",
+        zIndex: 9999,
+      }}
+    />
   );
 }

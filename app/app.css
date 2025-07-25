@@ -96,6 +96,19 @@ body {
 }
 
 @layer utilities {
+  @keyframes loading-bar {
+    0% {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+    50% {
+      transform: scaleX(0.5);
+    }
+    100% {
+      transform: scaleX(1);
+      transform-origin: right;
+    }
+  }
   .pattern-bg {
     background-image: 
       linear-gradient(#21759B11 1px, transparent 1px),
