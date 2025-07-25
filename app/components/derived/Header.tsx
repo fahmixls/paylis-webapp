@@ -1,7 +1,7 @@
 import { ChevronRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { cn } from "~/lib/utils";
-import ConnectButtonCustom from "./ConnectButtonCustom";
+import { useWalletLifecycle } from "~/hooks/useWalletLifecycle";
+import { cn, shortenAddress } from "~/lib/utils";
 
 const MenuAside = ({
   isOpen,
@@ -92,6 +92,7 @@ const MenuAside = ({
 
 const Header = () => {
   const [isOpen, setOpen] = useState(false);
+  const { address, isConnected } = useWalletLifecycle({});
 
   return (
     <>
@@ -115,7 +116,17 @@ const Header = () => {
         >
           <Menu className="size-8" aria-hidden="true" />
         </button>
-        <ConnectButtonCustom />
+        <div className="flex items-center space-x-2 text-base font-semibold text-wp">
+          <span
+            className={cn(
+              "h-3 w-3 rounded-full animate-pulse",
+              isConnected ? "bg-wp" : "bg-red-400",
+            )}
+          />
+          <span className={cn(isConnected ? "text-wp" : "text-red-600")}>
+            {isConnected ? shortenAddress(address!) : "No Wallet Connected"}
+          </span>
+        </div>
       </header>
 
       <MenuAside isOpen={isOpen} setOpen={setOpen} />

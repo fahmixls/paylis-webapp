@@ -5,17 +5,14 @@ import { shortenAddress } from "~/lib/utils";
 export default function ConnectButtonCustom() {
   return (
     <ConnectButton.Custom>
-      {({ openConnectModal, isConnected, openProfileModal, account }) => {
-        const address = account?.address || "";
-
+      {({ openConnectModal, isConnected, openProfileModal }) => {
         return (
           <div>
             <button
-              className="inline-flex items-center gap-2 px-3 py-3 rounded-lg bg-white text-wp font-semibold hover:bg-sky-50 transition"
+              className="inline-flex items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
               onClick={isConnected ? openProfileModal : openConnectModal}
             >
-              <Wallet2 className="size-4" />
-              {isConnected ? shortenAddress(address) : "Connect"}
+              <Wallet2 className="size-4" /> Connect Wallet
             </button>
           </div>
         );
