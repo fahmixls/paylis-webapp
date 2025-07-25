@@ -1,19 +1,6 @@
-import type { Route } from "./+types/index";
-import { Link, useLoaderData, redirect } from "react-router";
-import { getSessionFromRequest } from "../../lib/session.server";
+import { Link, useLoaderData } from "react-router";
 import type { User } from "../../db/schema";
-import { verifySession } from "~/lib/auth.server";
-
-export async function loader({ request }: Route.LoaderArgs) {
-  const sessionToken = getSessionFromRequest(request);
-  const user = sessionToken ? await verifySession(sessionToken) : null;
-
-  if (!user) {
-    return redirect("/login");
-  }
-
-  return { user };
-}
+import type { loader } from "./layout";
 
 export default function Dashboard() {
   const { user }: { user: User } = useLoaderData<typeof loader>();

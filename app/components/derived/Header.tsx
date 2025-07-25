@@ -1,7 +1,9 @@
 import { ChevronRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useWalletLifecycle } from "~/hooks/useWalletLifecycle";
+import { useLoaderData } from "react-router";
+import type { User } from "~/db/schema";
 import { cn, shortenAddress } from "~/lib/utils";
+import type { loader } from "~/pages/dashboard/layout";
 
 const MenuAside = ({
   isOpen,
@@ -92,7 +94,7 @@ const MenuAside = ({
 
 const Header = () => {
   const [isOpen, setOpen] = useState(false);
-  const { address, isConnected } = useWalletLifecycle({});
+  const { user }: { user: User } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -119,7 +121,7 @@ const Header = () => {
         <div className="flex items-center space-x-2 text-base font-semibold text-wp">
           <span className="h-3 w-3 rounded-full animate-pulse duration-500 bg-wp" />
           <span className="text-wp">
-            {isConnected ? shortenAddress(address!) : ""}
+            {user ? shortenAddress(user.address!) : ""}
           </span>
         </div>
       </header>
