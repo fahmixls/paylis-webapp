@@ -117,8 +117,8 @@ const Header = () => {
           <Menu className="size-8" aria-hidden="true" />
         </button>
         <div className="flex items-center space-x-2 text-base font-semibold text-wp">
-          <span className="h-3 w-3 rounded-full animate-pulse bg-wp" />
-          <span className="text-red-600">
+          <span className="h-3 w-3 rounded-full animate-pulse duration-500 bg-wp" />
+          <span className="text-wp">
             {isConnected ? shortenAddress(address!) : ""}
           </span>
         </div>
