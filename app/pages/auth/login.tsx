@@ -6,6 +6,19 @@ import type { Route } from "./+types/login";
 import { LogIn, RefreshCcw } from "lucide-react";
 import ConnectButtonCustom from "~/components/derived/ConnectButtonCustom";
 import Footer from "~/components/derived/Footer";
+import { getSessionFromRequest } from "~/lib/session.server";
+import { verifySession } from "~/lib/auth.server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sessionToken = getSessionFromRequest(request);
+  const user = sessionToken ? await verifySession(sessionToken) : null;
+
+  if (user) {
+    return redirect("/dashboard");
+  }
+
+  return {};
+}
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();

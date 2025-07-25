@@ -1,16 +1,13 @@
 import {
   type RouteConfig,
   index,
-  layout,
   prefix,
   route,
 } from "@react-router/dev/routes";
 
 export default [
   index("pages/home/index.tsx"),
-  ...prefix("dashboard", [
-    layout("pages/dashboard/layout.tsx", [index("pages/dashboard/index.tsx")]),
-  ]),
+  ...prefix("dashboard", [index("pages/dashboard/index.tsx")]),
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
   ...prefix("api/auth", [
