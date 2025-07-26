@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Wallet,
 } from "lucide-react";
+import { Link } from "react-router";
 
 export default function ProductSection() {
   const products = [
@@ -87,14 +88,14 @@ export default function ProductSection() {
                 <p className="text-base text-slate-600 mb-6">
                   {product.description}
                 </p>
-                <a
+                <Link
                   className="inline-flex items-center gap-1 text-wp font-medium hover:underline focus:outline-none focus-visible:ring focus-visible:ring-offset-2 focus-visible:ring-wp"
                   aria-label={`${product.cta} for ${product.title}`}
-                  href={product.href}
+                  to={product.href}
                 >
                   {product.cta}{" "}
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </a>
+                </Link>
               </article>
             </li>
           ))}
