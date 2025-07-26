@@ -1,10 +1,13 @@
-import { Link, redirect, useLoaderData } from "react-router";
+import { Link, redirect, useLoaderData, useNavigate } from "react-router";
 import Footer from "~/components/derived/Footer";
 import Header from "~/components/derived/Header";
 import type { Route } from "./+types";
 import { getSessionFromRequest } from "~/lib/session.server";
 import { verifySession } from "~/lib/auth.server";
 import type { User } from "~/db/schema";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionToken = getSessionFromRequest(request);
@@ -19,6 +22,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function Dashboard() {
   const { user }: { user: User } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const id = toast("Logging out...", {
+      description: "Please wait while we log you out.",
+      icon: <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />,
+      duration: Infinity,
+    });
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    navigate("/logout");
+  };
   return (
     <div className="w-full h-full">
       <Header />{" "}
@@ -52,7 +68,9 @@ export default function Dashboard() {
           <Link to="/" style={{ marginRight: "1rem" }}>
             Home
           </Link>
-          <Link to="/logout">Logout</Link>
+          <Button type="button" variant="link" onClick={handleLogout}>
+            Logout
+          </Button>
         </div>
       </div>
       <Footer />

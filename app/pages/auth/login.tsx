@@ -3,11 +3,12 @@ import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
 import { SiweMessage } from "siwe";
 import { redirect } from "react-router";
 import type { Route } from "./+types/login";
-import { LogIn, RefreshCcw } from "lucide-react";
+import { Loader2, LogIn, RefreshCcw } from "lucide-react";
 import ConnectButtonCustom from "~/components/derived/ConnectButtonCustom";
 import Footer from "~/components/derived/Footer";
 import { getSessionFromRequest } from "~/lib/session.server";
 import { verifySession } from "~/lib/auth.server";
+import { toast } from "sonner";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionToken = getSessionFromRequest(request);
@@ -86,7 +87,11 @@ export default function AuthLogin() {
 
     setIsLoading(true);
     setError("");
-
+    toast("Logging in", {
+      description: "Logging into your account with Ethereum...",
+      icon: <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />,
+      duration: Infinity,
+    });
     try {
       const message = new SiweMessage({
         domain: window.location.host,

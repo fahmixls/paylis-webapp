@@ -8,11 +8,12 @@ import {
   useNavigation,
   type MetaFunction,
 } from "react-router";
-
+import { Toaster } from "~/components/ui/sonner";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Providers } from "./providers";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "Paylis" },
@@ -80,6 +81,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {children}
           </main>
         </Providers>
+        <Toaster richColors position="top-center" />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -132,6 +134,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 
 function GlobalSpinner() {
+  toast.dismiss();
   return (
     <div
       style={{
