@@ -160,7 +160,7 @@ export default function AuthLogin() {
 
   return (
     <div className="max-w-lg h-[64vh] mx-auto px-6 py-12 text-center font-sans">
-      <div className="flex justify-between max-w-sm mx-auto mb-8">
+      <div className="flex justify-evenly max-w-sm mx-auto mb-8">
         <StepIndicator step={1} title="Connect Wallet" />
         <StepIndicator step={2} title="Sign In" />
       </div>

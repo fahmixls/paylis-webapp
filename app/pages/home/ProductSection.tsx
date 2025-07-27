@@ -10,6 +10,14 @@ import { Link } from "react-router";
 export default function ProductSection() {
   const products = [
     {
+      title: "Direct Payment",
+      description:
+        "Instantly send and receive stablecoin payments via wallet-to-wallet transactions. No plugins needed.",
+      icon: <ArrowRight className="w-6 h-6 text-wp" aria-hidden="true" />,
+      cta: "Try Direct Pay",
+      href: "/direct-payment",
+    },
+    {
       title: "WooCommerce Payment Plugin",
       description:
         "Seamlessly accept stablecoin payments on your WooCommerce store. Fast, secure, and borderless.",

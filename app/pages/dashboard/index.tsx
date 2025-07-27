@@ -36,9 +36,9 @@ export default function Dashboard() {
     navigate("/logout");
   };
   return (
-    <div className="w-full h-full">
-      <Header />{" "}
-      <div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem" }}>
+    <div className="w-full h-full min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1">
         <h1>Dashboard</h1>
         <p>Welcome to your dashboard!</p>
 

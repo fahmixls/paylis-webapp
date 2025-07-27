@@ -10,6 +10,7 @@ export default [
   ...prefix("dashboard", [index("pages/dashboard/index.tsx")]),
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
+  route("direct-payment", "pages/direct-payment/index.tsx"),
   ...prefix("api/auth", [
     route("nonce", "api/auth/nonce.ts"),
     route("verify", "api/auth/verify.ts"),
