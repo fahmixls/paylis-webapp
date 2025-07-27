@@ -7,6 +7,7 @@ import {
   index,
   unique,
   text,
+  numeric,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
@@ -60,6 +61,37 @@ export const merchants = pgTable(
   (table) => ({
     userIdIdx: index("idx_merchants_user_id").on(table.userId),
     uniqueUser: unique("uq_merchants_user_id").on(table.userId), // Enforce 1:1 relation
+  }),
+);
+
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: serial("id").primaryKey(),
+
+    payerAddress: varchar("payer_address", { length: 42 }).notNull(),
+    recipientAddress: varchar("recipient_address", { length: 42 }).notNull(),
+
+    tokenAddress: varchar("token_address", { length: 42 }).notNull(),
+    amount: numeric("amount", { precision: 78, scale: 0 }).notNull(), // use string/BigInt in code
+    fee: numeric("fee", { precision: 78, scale: 0 }).default("0"),
+
+    txHash: varchar("tx_hash", { length: 66 }).notNull().unique(),
+    blockNumber: integer("block_number").notNull(),
+    chainId: integer("chain_id").notNull(),
+
+    status: varchar("status", { length: 32 }).notNull(),
+    note: text("note"),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    confirmedAt: timestamp("confirmed_at"),
+  },
+  (table) => ({
+    payerIdx: index("idx_transactions_sender").on(table.payerAddress),
+    recipientIdx: index("idx_transactions_recipient").on(
+      table.recipientAddress,
+    ),
+    txHashIdx: index("idx_transactions_tx_hash").on(table.txHash),
   }),
 );
 

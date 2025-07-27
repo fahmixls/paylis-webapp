@@ -128,6 +128,7 @@ export default function AuthLogin() {
     } catch {
       setError("Unknown error");
     } finally {
+      toast.dismiss();
       setIsLoading(false);
     }
   };
