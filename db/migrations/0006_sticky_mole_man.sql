@@ -1,0 +1,1 @@
+ALTER TABLE "transactions" ALTER COLUMN "block_number" DROP NOT NULL;

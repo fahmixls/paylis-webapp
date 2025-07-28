@@ -6,6 +6,7 @@ import { WagmiProvider, type Config } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { XellarKitProvider, lightTheme } from "@xellar/kit";
 import type React from "react";
+import { createPublicClient, http } from "viem";
 
 const queryClient = new QueryClient();
 const walletConnectProjectId = import.meta.env.VITE_CONNECT;

@@ -1,0 +1,1 @@
+ALTER TABLE "transactions" ALTER COLUMN "transaction_id" SET DATA TYPE varchar(42);

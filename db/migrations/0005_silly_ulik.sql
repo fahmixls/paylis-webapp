@@ -1,0 +1,1 @@
+ALTER TABLE "transactions" ALTER COLUMN "tx_hash" DROP NOT NULL;

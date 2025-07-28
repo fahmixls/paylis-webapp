@@ -15,6 +15,16 @@ import { Providers } from "./providers";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
+declare global {
+  interface BigInt {
+    toJSON(): Number;
+  }
+}
+
+BigInt.prototype.toJSON = function () {
+  return Number(this);
+};
+
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "Paylis" },
   { title: "Paylis – Stablecoin Payment Gateway on Lisk" },

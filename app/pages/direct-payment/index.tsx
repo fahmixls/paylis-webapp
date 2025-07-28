@@ -1,7 +1,5 @@
-import { ArrowRight, RefreshCcw } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useDisconnect } from "wagmi";
+import { ArrowRight, Pencil, RefreshCcw } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import ConnectButtonCustom from "~/components/derived/ConnectButtonCustom";
 import Footer from "~/components/derived/Footer";
 import { Input } from "~/components/ui/input";
@@ -16,35 +14,115 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { useWalletLifecycle } from "~/hooks/useWalletLifecycle";
-import { MockToken } from "~/mocks/token";
+import {
+  getTokenByAddress,
+  MinimalForwarderAddress,
+  MockToken,
+  PaymentGatewayAddress,
+} from "~/mocks/token";
+
+import { useDisconnect, useReadContract } from "wagmi";
+import { useApproveToken } from "~/hooks/useApproveToken";
+import { useExecutePayment } from "~/hooks/useExecutePayment";
+import { useNeedsApproval } from "~/hooks/useNeedApproval";
+import { toast } from "sonner";
+
+import ERC20_ABI from "~/abi/MockIDRX.json";
+import MINIMAL_FORWARDER_ABI from "~/abi/MinimalForwarder.json";
+import { parseUnits } from "viem";
+import { form } from "viem/chains";
+
+type FormDataType = {
+  sender_address: `0x${string}`;
+  token_address: `0x${string}`;
+  recipient_address: `0x${string}`;
+  token_symbol: string;
+  token_icon: string;
+  amount: number;
+  token_decimal: number;
+  token_min_amount: number;
+};
 
 export default function DirectPayment() {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-  const [formData, setFormData] = useState({
-    sender_address: "",
-    recipient_address: "",
-    token_address: "",
+  const amountRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState<FormDataType>({
+    sender_address: "0x",
+    recipient_address: "0x",
+    token_address: "0x",
+    token_symbol: "",
+    token_icon: "",
+    token_decimal: 18,
+    token_min_amount: 0,
     amount: 0,
   });
   const [apiData, setApiData] = useState<any>(null);
   const [fee, setFee] = useState(0);
   const [total, setTotal] = useState(0);
-
-  const { isConnected } = useWalletLifecycle({
+  const { address, isConnected } = useWalletLifecycle({
     onConnect(address) {
       setFormData({
         ...formData,
-        sender_address: address,
+        sender_address: address as `0x${string}`,
       });
     },
     onDisconnect() {
       setFormData({
         ...formData,
-        sender_address: "",
+        sender_address: "0x",
       });
     },
   });
+  const { data: allowance } = useReadContract({
+    address: formData.token_address as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: "allowance",
+    args: [address, PaymentGatewayAddress],
+    query: { enabled: !!(address && formData.token_address) },
+  });
+  const { data: nonce } = useReadContract({
+    address: MinimalForwarderAddress,
+    abi: MINIMAL_FORWARDER_ABI,
+    functionName: "getNonce",
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+  const approve = useApproveToken(
+    formData.token_address,
+    PaymentGatewayAddress,
+  );
+  const executePayment = useExecutePayment(nonce as bigint);
+  const needsApproval = useNeedsApproval(
+    allowance as bigint,
+    String(formData.amount),
+  );
+
+  const handleExecute = async () => {
+    toast.loading("Processing your payment...");
+    try {
+      if (needsApproval) {
+        toast("Requesting token approval...");
+        await approve(String(formData.amount));
+      }
+
+      toast("Executing payment...");
+      await executePayment({
+        token: formData.token_address,
+        receiver: formData.recipient_address,
+        amount: BigInt(
+          parseUnits(String(formData.amount), formData.token_decimal),
+        ),
+        feeBps: BigInt(parseUnits(String(fee), formData.token_decimal)),
+      });
+
+      toast.success("Payment successful!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Payment failed. Please try again.");
+    } finally {
+      toast.dismiss();
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -56,21 +134,51 @@ export default function DirectPayment() {
     });
   };
 
+  const handleSelectChange = (value: string) => {
+    const data = getTokenByAddress(value);
+    setFormData({
+      ...formData,
+      token_address: data!.address,
+      token_icon: data!.icon,
+      token_symbol: data!.symbol,
+      token_decimal: data!.decimal,
+      token_min_amount: data!.min,
+    });
+  };
+  const { data: balance } = useReadContract({
+    address: formData.token_address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: [formData.sender_address],
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formData.amount < formData.token_min_amount) {
+      amountRef.current?.focus();
+      toast(`Minimal amount is ${formData.token_min_amount}`);
+      return;
+    }
     try {
-      const response = await fetch("YOUR_API_ENDPOINT", {
-        method: "POST",
+      const url = `${window.location.origin}/api/transaction/fee?token=${formData.token_address}&amount=${formData.amount}`;
+      const response = await fetch(url, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
       });
       const data = await response.json();
+      if (Number(balance) < data.total) {
+        amountRef.current?.focus();
+        toast(
+          `Token balance on your wallet is less than ${formData.amount} ${formData.token_symbol}`,
+        );
+        return;
+      }
       setApiData(data);
       setFee(data.fee || 0);
       setTotal(parseFloat(data.total || 0));
-      navigate("/step2");
+      setCurrentStep(2);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -118,13 +226,13 @@ export default function DirectPayment() {
           {currentStep === 1 && (
             <form
               onSubmit={handleSubmit}
-              className="space-y-6 w-full text-center max-w-2xs"
+              className="space-y-6 w-full text-center"
             >
               <div className="grid w-full gap-3">
                 {isConnected ? (
                   <button
                     onClick={() => disconnect()}
-                    className="inline-flex justify-center items-center w-full max-w-xs gap-2 rounded-md px-8 py-3 text-base font-semibold border transition-all duration-200 ease-in-out
+                    className="inline-flex justify-center items-center w-full gap-2 rounded-md px-8 py-3 text-base font-semibold border transition-all duration-200 ease-in-out
                border-wp text-wp hover:bg-wp/10 hover:shadow-md hover:scale-[1.01]
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wp"
                   >
@@ -157,7 +265,10 @@ export default function DirectPayment() {
               </div>
               <div className="grid w-full gap-3">
                 <Label htmlFor="token_address">Select Stablecoin</Label>
-                <Select>
+                <Select
+                  value={formData.token_address}
+                  onValueChange={(v) => handleSelectChange(v)}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue
                       id="token_address"
@@ -190,13 +301,20 @@ export default function DirectPayment() {
                   id="amount"
                   type="number"
                   name="amount"
+                  ref={amountRef}
                   value={formData.amount}
                   onChange={handleInputChange}
                 />
               </div>
               <button
                 type="submit"
-                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={
+                  !formData.token_address ||
+                  !formData.amount ||
+                  !formData.sender_address ||
+                  !formData.recipient_address
+                }
               >
                 Review Payment
                 <ArrowRight />
@@ -204,34 +322,34 @@ export default function DirectPayment() {
             </form>
           )}
           {currentStep === 2 && (
-            <div className="space-y-6 w-full text-center max-w-2xs">
-              <div className="grid w-full gap-3">
-                <Label>Sender Address</Label>
-                <Input value={formData.sender_address} disabled />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label>Recipient Address</Label>
-                <Input value={formData.recipient_address} disabled />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label>Stablecoin</Label>
-                <Input value={formData.token_address} disabled />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label>Amount</Label>
-                <Input value={formData.amount} disabled />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label>Fees</Label>
-                <Input value={fee} disabled />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label>Total Amount</Label>
-                <Input value={total} disabled />
-              </div>
+            <div className="space-y-6 w-full">
+              <Field name="Your Address" value={formData.sender_address} />
+              <Field
+                name="Recipient Address"
+                value={formData.recipient_address}
+              />
+              <Field name="Stablecoin" value={formData.token_address} />
+              <Field name="Amount" value={formData.amount} />
+              <Field name="Fee" value={fee} />
+              <Field name="Total To Pay" value={total} />
               <button
+                onClick={() => setCurrentStep(1)}
                 type="button"
-                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg border border-wp text-wp font-semibold shadow-sm hover:shadow-md hover:scale-101 transition-transform duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Edit Again
+                <Pencil className="size-3" />
+              </button>
+              <button
+                onClick={() => handleExecute()}
+                type="button"
+                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={
+                  !formData.token_address ||
+                  !formData.amount ||
+                  !formData.sender_address ||
+                  !formData.recipient_address
+                }
               >
                 Process Payment
                 <ArrowRight />
@@ -244,3 +362,17 @@ export default function DirectPayment() {
     </div>
   );
 }
+
+const Field = ({ name, value }: { name: string; value: any }) => {
+  return (
+    <div className="grid w-full border-b border-slate-200">
+      <label className="text-slate-500 text-sm">{name}</label>
+      <input
+        className="appearance-none truncate text-wp text-lg wrap-normal border-none p-0 m-0 font-medium font-mono focus:outline-none tracking-tighter"
+        value={value}
+        title={value}
+        disabled
+      />
+    </div>
+  );
+};

@@ -68,6 +68,7 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
+    transactionId: varchar("transaction_id", { length: 42 }).notNull(),
 
     payerAddress: varchar("payer_address", { length: 42 }).notNull(),
     recipientAddress: varchar("recipient_address", { length: 42 }).notNull(),
@@ -76,8 +77,8 @@ export const transactions = pgTable(
     amount: numeric("amount", { precision: 78, scale: 0 }).notNull(), // use string/BigInt in code
     fee: numeric("fee", { precision: 78, scale: 0 }).default("0"),
 
-    txHash: varchar("tx_hash", { length: 66 }).notNull().unique(),
-    blockNumber: integer("block_number").notNull(),
+    txHash: varchar("tx_hash", { length: 66 }).unique(),
+    blockNumber: integer("block_number"),
     chainId: integer("chain_id").notNull(),
 
     status: varchar("status", { length: 32 }).notNull(),
@@ -95,6 +96,8 @@ export const transactions = pgTable(
   }),
 );
 
+export type Transaction = typeof transactions.$inferSelect;
+export type NewTransaction = typeof transactions.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
