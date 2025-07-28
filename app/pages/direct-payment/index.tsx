@@ -117,8 +117,10 @@ export default function DirectPayment() {
 
       toast.success("Payment successful!");
     } catch (err: any) {
-      console.error(err);
-      toast.error("Payment failed. Please try again.");
+      toast.error("Payment failed. Please try again.", {
+        duration: Infinity,
+        closeButton: true,
+      });
     } finally {
       toast.dismiss();
     }
