@@ -29,7 +29,7 @@ export async function action({ request }: Route.ActionArgs) {
       to,
       value,
       gas_limit: gas,
-      speed: Speed.SAFE_LOW,
+      speed: Speed.FAST,
     });
 
     const { id: respId } = res.data.data as ApiResponseTransactionResponseData;
