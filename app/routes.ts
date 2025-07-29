@@ -18,9 +18,6 @@ export default [
     route("me", "api/auth/me.ts"),
     route("logout", "api/auth/logout.ts"),
   ]),
-  ...prefix("api/transaction", [
-    index("api/transaction/send.ts"),
-    route("fee", "api/transaction/fee.ts"),
-  ]),
+  ...prefix("api/transaction", [index("api/transaction/send.ts")]),
   ...prefix("api/webhook", [route("relayer", "api/webhook/relayer.ts")]),
 ] satisfies RouteConfig;

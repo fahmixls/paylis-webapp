@@ -24,13 +24,11 @@ import {
 import { useDisconnect, useReadContract } from "wagmi";
 import { useApproveToken } from "~/hooks/useApproveToken";
 import { useExecutePayment } from "~/hooks/useExecutePayment";
-import { useNeedsApproval } from "~/hooks/useNeedApproval";
 import { toast } from "sonner";
 
 import ERC20_ABI from "~/abi/MockIDRX.json";
 import MINIMAL_FORWARDER_ABI from "~/abi/MinimalForwarder.json";
-import { parseUnits } from "viem";
-import { calculateFees, feeMapping } from "~/lib/fee";
+import { calculateFees } from "~/lib/fee";
 
 type FormDataType = {
   sender_address: `0x${string}`;
@@ -93,10 +91,10 @@ export default function DirectPayment() {
   );
   const executePayment = useExecutePayment(nonce as bigint);
 
-  const needsApproval = useNeedsApproval(
+  /*const needsApproval = useNeedsApproval(
     allowance as bigint,
     apiData ? apiData.total.toString() : "0",
-  );
+  );*/
 
   const handleExecute = async () => {
     toast.loading("Processing your payment...");
@@ -108,6 +106,8 @@ export default function DirectPayment() {
       );
 
       // Check if approval is needed for the TOTAL amount (amount + fees)
+      // Should compare allowance vs total amount needed (including fees)
+      const needsApproval = (allowance as bigint) < feeCalc.totalAmount;
       if (needsApproval) {
         toast("Requesting token approval...");
         // Approve for total amount including fees
@@ -118,8 +118,8 @@ export default function DirectPayment() {
       await executePayment({
         token: formData.token_address,
         receiver: formData.recipient_address,
-        amount: feeCalc.amountBigInt, // Original amount
-        feeBps: BigInt(feeCalc.totalFeeBps), // Total fee as basis points
+        amount: feeCalc.amountBigInt,
+        feeBps: BigInt(feeCalc.totalFeeBps),
       });
 
       toast.success("Payment successful!");

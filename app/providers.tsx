@@ -20,6 +20,10 @@ const config = defaultConfig({
   chains: [liskSepolia],
 }) as Config;
 
+export const publicClient = createPublicClient({
+  chain: liskSepolia,
+  transport: http(),
+});
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>

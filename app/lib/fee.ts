@@ -27,31 +27,20 @@ export const calculateFees = (
   if (!config) {
     throw new Error(`Fee config not found for token ${tokenAddress}`);
   }
-  const amountInTokens = amount;
-
-  // Calculate flat fee (convert from basis points to actual tokens)
-  // If flat is in basis points: flat fee = (amount * flatBps) / 10000
-  // If flat is a fixed token amount: use directly
-  const flatFeeInTokens = (amountInTokens * config.flat) / 10000;
-
-  // Calculate percentage fee
-  const percentageFeeInTokens = (amountInTokens * config.percentage) / 10000;
-
-  // Total fee in tokens
+  const amountInTokens = Number(amount);
+  const flatFeeInTokens = Number(config.flat);
+  const percentageFeeInTokens =
+    (amountInTokens * Number(config.percentage)) / 10_000;
   const totalFeeInTokens = flatFeeInTokens + percentageFeeInTokens;
-
-  // Total amount user needs to pay
   const totalAmountInTokens = amountInTokens + totalFeeInTokens;
-
   return {
     amount: amountInTokens,
     flatFee: flatFeeInTokens,
     percentageFee: percentageFeeInTokens,
     totalFee: totalFeeInTokens,
     totalAmount: totalAmountInTokens,
-    // For contract calls - convert to BigInt with proper decimals
     amountBigInt: parseUnits(amountInTokens.toString(), tokenDecimals),
-    totalFeeBps: Math.round((totalFeeInTokens / amountInTokens) * 10000), // Convert back to BPS for contract
+    totalFeeBps: Math.round((totalFeeInTokens / amountInTokens) * 10000),
     totalAmountBigInt: parseUnits(
       totalAmountInTokens.toString(),
       tokenDecimals,
