@@ -33,6 +33,6 @@ export const getTokenByAddress = (address: string) => {
 };
 
 export const MinimalForwarderAddress =
-  "0xf7531AB005b576d71F4d4894EbC674D8Eb7285B9" as `0x${string}`;
+  "0xb9DE485aF056e8a97E47753D54Fd67748bd16A78" as `0x${string}`;
 export const PaymentGatewayAddress =
-  "0x433bE1B59C4562f7fA78210910ed8c406DAf3325" as `0x${string}`;
+  "0x3a8fFa05dcBc71a4d1C3A0A92324d084393f60C9" as `0x${string}`;
