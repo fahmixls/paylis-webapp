@@ -91,11 +91,6 @@ export default function DirectPayment() {
   );
   const executePayment = useExecutePayment(nonce as bigint);
 
-  /*const needsApproval = useNeedsApproval(
-    allowance as bigint,
-    apiData ? apiData.total.toString() : "0",
-  );*/
-
   const handleExecute = async () => {
     toast.loading("Processing your payment...");
     try {
@@ -107,7 +102,7 @@ export default function DirectPayment() {
 
       // Check if approval is needed for the TOTAL amount (amount + fees)
       // Should compare allowance vs total amount needed (including fees)
-      const needsApproval = (allowance as bigint) < feeCalc.totalAmount;
+      const needsApproval = (allowance as bigint) < feeCalc.totalAmountBigInt;
       if (needsApproval) {
         toast("Requesting token approval...");
         // Approve for total amount including fees
