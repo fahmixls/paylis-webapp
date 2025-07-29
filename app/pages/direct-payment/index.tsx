@@ -310,7 +310,7 @@ export default function DirectPayment() {
               </div>
               <button
                 type="submit"
-                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={
                   !formData.token_address ||
                   !formData.amount ||
