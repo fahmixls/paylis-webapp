@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import ERC20_ABI from "~/abi/MockIDRX.json";
 import MINIMAL_FORWARDER_ABI from "~/abi/MinimalForwarder.json";
 import { parseUnits } from "viem";
+import { calculateFees, feeMapping } from "~/lib/fee";
 
 type FormDataType = {
   sender_address: `0x${string}`;
@@ -91,36 +92,43 @@ export default function DirectPayment() {
     PaymentGatewayAddress,
   );
   const executePayment = useExecutePayment(nonce as bigint);
+
   const needsApproval = useNeedsApproval(
     allowance as bigint,
-    String(formData.amount),
+    apiData ? apiData.total.toString() : "0",
   );
 
   const handleExecute = async () => {
     toast.loading("Processing your payment...");
     try {
+      const feeCalc = calculateFees(
+        formData.amount,
+        formData.token_address,
+        formData.token_decimal,
+      );
+
+      // Check if approval is needed for the TOTAL amount (amount + fees)
       if (needsApproval) {
         toast("Requesting token approval...");
-        await approve(String(formData.amount));
+        // Approve for total amount including fees
+        await approve(feeCalc.totalAmountBigInt.toString());
       }
 
       toast("Executing payment...");
       await executePayment({
         token: formData.token_address,
         receiver: formData.recipient_address,
-        amount: BigInt(
-          parseUnits(String(formData.amount), formData.token_decimal),
-        ),
-        feeBps: BigInt(parseUnits(String(fee), formData.token_decimal)),
+        amount: feeCalc.amountBigInt, // Original amount
+        feeBps: BigInt(feeCalc.totalFeeBps), // Total fee as basis points
       });
 
       toast.success("Payment successful!");
     } catch (err: any) {
+      console.error("Payment error:", err);
       toast.error("Payment failed. Please try again.", {
         duration: Infinity,
         closeButton: true,
       });
-      console.log(err);
     } finally {
       toast.dismiss();
     }
@@ -161,28 +169,40 @@ export default function DirectPayment() {
       toast(`Minimal amount is ${formData.token_min_amount}`);
       return;
     }
+
     try {
-      const url = `${window.location.origin}/api/transaction/fee?token=${formData.token_address}&amount=${formData.amount}`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (Number(balance) < data.total) {
+      // Calculate fees on frontend
+      const feeCalc = calculateFees(
+        formData.amount,
+        formData.token_address,
+        formData.token_decimal,
+      );
+
+      // Check balance against total amount needed
+      const balanceInTokens =
+        Number(balance) / Math.pow(10, formData.token_decimal);
+      if (balanceInTokens < feeCalc.totalAmount) {
         amountRef.current?.focus();
         toast(
-          `Token balance on your wallet is less than ${formData.amount} ${formData.token_symbol}`,
+          `Insufficient balance. Need ${feeCalc.totalAmount} ${formData.token_symbol} (including fees), but you have ${balanceInTokens}`,
         );
         return;
       }
-      setApiData(data);
-      setFee(data.fee || 0);
-      setTotal(parseFloat(data.total || 0));
+
+      // Set the calculated values
+      setApiData({
+        amount: feeCalc.amount,
+        flatFee: feeCalc.flatFee,
+        percentageFee: feeCalc.percentageFee,
+        fee: feeCalc.totalFee,
+        total: feeCalc.totalAmount,
+      });
+      setFee(feeCalc.totalFee);
+      setTotal(feeCalc.totalAmount);
       setCurrentStep(2);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error calculating fees:", error);
+      toast.error("Error calculating fees");
     }
   };
 
