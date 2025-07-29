@@ -20,7 +20,8 @@ export async function action({ request }: Route.ActionArgs) {
 
   try {
     const {
-      message: { from, to, value, gas, data, amount, feeBps, token },
+      request: { from, to, value, gas, data },
+      meta: { receiver, fee, token, amount },
     } = await request.json();
 
     // Step 1: Send transaction
@@ -68,10 +69,10 @@ export async function action({ request }: Route.ActionArgs) {
       confirmedAt: confirmed_at ? new Date(confirmed_at) : null,
       createdAt: new Date(created_at),
       payerAddress: from,
-      recipientAddress: to,
+      recipientAddress: receiver,
       amount,
       tokenAddress: token,
-      fee: feeBps,
+      fee: fee,
       chainId: 4202,
     });
 

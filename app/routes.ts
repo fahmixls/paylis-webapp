@@ -22,4 +22,5 @@ export default [
     index("api/transaction/send.ts"),
     route("fee", "api/transaction/fee.ts"),
   ]),
+  ...prefix("api/webhook", [route("relayer", "api/webhook/relayer.ts")]),
 ] satisfies RouteConfig;
