@@ -37,7 +37,7 @@ export function useExecutePayment(nonce: bigint | undefined) {
       from: address,
       to: PaymentGatewayAddress,
       value: 0n,
-      gas: 30_000n,
+      gas: 100_000n,
       nonce,
       data: innerCalldata,
     };

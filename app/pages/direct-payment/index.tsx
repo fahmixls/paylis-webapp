@@ -120,6 +120,7 @@ export default function DirectPayment() {
         duration: Infinity,
         closeButton: true,
       });
+      console.log(err);
     } finally {
       toast.dismiss();
     }
@@ -281,7 +282,7 @@ export default function DirectPayment() {
                       <SelectLabel>Stabelcoin</SelectLabel>
                       {MockToken.map((x) => {
                         return (
-                          <SelectItem value={x.address}>
+                          <SelectItem key={x.address} value={x.address}>
                             <img
                               className="rounded-full size-5 -p-2 outline-1"
                               alt={x.symbol}

@@ -1,5 +1,3 @@
-import { parseUnits } from "viem";
-
 export interface FeeMapping {
   [key: string]: {
     flat: number;
