@@ -30,7 +30,6 @@ import { toast } from "sonner";
 import ERC20_ABI from "~/abi/MockIDRX.json";
 import MINIMAL_FORWARDER_ABI from "~/abi/MinimalForwarder.json";
 import { parseUnits } from "viem";
-import { form } from "viem/chains";
 
 type FormDataType = {
   sender_address: `0x${string}`;
@@ -84,7 +83,7 @@ export default function DirectPayment() {
     address: MinimalForwarderAddress,
     abi: MINIMAL_FORWARDER_ABI,
     functionName: "getNonce",
-    args: address ? [address] : undefined,
+    args: [address],
     query: { enabled: !!address },
   });
   const approve = useApproveToken(
