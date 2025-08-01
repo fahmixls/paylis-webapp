@@ -12,6 +12,7 @@ export default [
   route("logout", "pages/auth/logout.tsx"),
   route("transaction/:id", "pages/transaction/index.tsx"),
   route("transfer", "pages/transfer/index.tsx"),
+  route("faucet", "pages/faucet/index.tsx"),
   ...prefix("api/auth", [
     route("nonce", "api/auth/nonce.ts"),
     route("verify", "api/auth/verify.ts"),

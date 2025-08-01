@@ -3,6 +3,7 @@ import Footer from "~/components/derived/Footer";
 import Step1Form from "./components/step1";
 import Step2Review from "./components/step2";
 import type { Address } from "viem";
+import { AnnouncementBar } from "~/components/derived/ClaimFaucetAnnounce";
 
 export type FormData = {
   sender: Address | null;
@@ -59,6 +60,7 @@ export default function Payment() {
   );
   return (
     <div className="w-full grid grid-rows-[auto_1fr_auto] min-h-screen">
+      <AnnouncementBar />
       <div aria-hidden />
       <div className="h-full mx-auto px-6 py-12 flex flex-col max-w-md justify-center items-center">
         <h1 className="w-full text-center font-extrabold text-2xl text-wp mb-12">

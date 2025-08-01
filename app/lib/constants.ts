@@ -11,8 +11,8 @@ export const MockToken: Array<TokenType> = [
     symbol: "IDRX",
     icon: "/assets/idrx.svg",
     decimal: 2,
-    min: 2000,
-    flat: 1000,
+    min: 1000,
+    flat: 500,
   },
   {
     address: "0x0A218c6a23Ede0395474e9d875c7fE2BF859Cf10",
