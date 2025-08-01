@@ -1,5 +1,24 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type Address } from "viem";
+import { MockToken } from "./constants";
+
+export const getTokenByAddress = (address: string) => {
+  return MockToken.find(
+    (token) => token.address.toLowerCase() === address.toLowerCase()
+  );
+};
+
+export const calculateFees = (amount: number, token: Address) => {
+  const tokenData = getTokenByAddress(token);
+  const fee = Number(tokenData?.flat) + (Number(amount) * 100) / 10_000;
+  const total = Number(amount) + fee;
+
+  return {
+    fee,
+    total,
+  };
+};
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

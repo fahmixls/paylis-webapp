@@ -7,12 +7,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { XellarKitProvider, lightTheme } from "@xellar/kit";
 import type React from "react";
 import { createPublicClient, http } from "viem";
+import { createConfig } from "@wagmi/core";
 
 const queryClient = new QueryClient();
 const walletConnectProjectId = import.meta.env.VITE_CONNECT;
 const xellarAppId = import.meta.env.VITE_XELLAR;
 
-const config = defaultConfig({
+export const config = defaultConfig({
   appName: "Paylis",
   walletConnectProjectId,
   xellarAppId,
@@ -24,6 +25,7 @@ export const publicClient = createPublicClient({
   chain: liskSepolia,
   transport: http(),
 });
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>

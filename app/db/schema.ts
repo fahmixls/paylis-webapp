@@ -68,14 +68,13 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
-    transactionId: varchar("transaction_id", { length: 42 }).notNull(),
+    transactionId: varchar("transaction_id", { length: 78 }),
 
     payerAddress: varchar("payer_address", { length: 42 }).notNull(),
     recipientAddress: varchar("recipient_address", { length: 42 }).notNull(),
 
     tokenAddress: varchar("token_address", { length: 42 }).notNull(),
-    amount: numeric("amount", { precision: 78, scale: 0 }).notNull(), // use string/BigInt in code
-    fee: numeric("fee", { precision: 78, scale: 0 }).default("0"),
+    amount: numeric("amount", { precision: 78, scale: 0 }).notNull(),
 
     txHash: varchar("tx_hash", { length: 66 }).unique(),
     blockNumber: integer("block_number"),

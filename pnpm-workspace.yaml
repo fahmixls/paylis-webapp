@@ -4,5 +4,6 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
+  - bigint-buffer
   - esbuild
   - keccak

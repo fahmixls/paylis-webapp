@@ -1,7 +1,7 @@
 import { db } from "~/db/connection";
-import type { Route } from "./+types/relayer";
 import { transactions } from "~/db/schema";
 import { eq } from "drizzle-orm";
+import type { Route } from "./+types/relayer";
 
 export async function action({ request }: Route.ActionArgs) {
   const data = await request.json();

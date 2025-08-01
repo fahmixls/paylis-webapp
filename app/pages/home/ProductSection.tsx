@@ -15,7 +15,7 @@ export default function ProductSection() {
         "Instantly send and receive stablecoin payments via wallet-to-wallet transactions. No plugins needed.",
       icon: <ArrowRight className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Try Direct Pay",
-      href: "/direct-payment",
+      href: "/transfer",
     },
     {
       title: "WooCommerce Payment Plugin",

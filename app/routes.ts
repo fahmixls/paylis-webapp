@@ -11,13 +11,13 @@ export default [
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
   route("transaction/:id", "pages/transaction/index.tsx"),
-  route("direct-payment", "pages/direct-payment/index.tsx"),
+  route("transfer", "pages/transfer/index.tsx"),
   ...prefix("api/auth", [
     route("nonce", "api/auth/nonce.ts"),
     route("verify", "api/auth/verify.ts"),
     route("me", "api/auth/me.ts"),
     route("logout", "api/auth/logout.ts"),
   ]),
-  ...prefix("api/transaction", [index("api/transaction/send.ts")]),
+  ...prefix("api/transaction", [index("api/transaction/submit.ts")]),
   ...prefix("api/webhook", [route("relayer", "api/webhook/relayer.ts")]),
 ] satisfies RouteConfig;
