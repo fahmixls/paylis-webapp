@@ -23,9 +23,7 @@ type Props = {
 export default function Step2Review({ formData, fee, total, goBack }: Props) {
   const { data: walletClient } = useWalletClient();
   const [needsApproval, setNeedsApproval] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [approvalDone, setApprovalDone] = useState(false);
   const { executePayment } = usePayRelay();
 
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function Step2Review({ formData, fee, total, goBack }: Props) {
   }, [formData.sender, formData.token.address, total]);
 
   const handleApproval = async () => {
-    setIsApproving(true);
     toast.loading("Requesting token approval...", { id: "approval" });
     try {
       const hash = await walletClient!.writeContract({
@@ -58,15 +55,12 @@ export default function Step2Review({ formData, fee, total, goBack }: Props) {
       });
       await publicClient.waitForTransactionReceipt({ hash });
       setNeedsApproval(false);
-      setApprovalDone(true);
       toast.success("Approval successful!", { id: "approval" });
     } catch (e) {
       console.error(e);
       toast.error("Approval failed. Please check your wallet.", {
         id: "approval",
       });
-    } finally {
-      setIsApproving(false);
     }
   };
 
@@ -74,7 +68,8 @@ export default function Step2Review({ formData, fee, total, goBack }: Props) {
     setIsExecuting(true);
     toast.loading("Processing your payment...", { id: "pay" });
     try {
-      await executePayment({
+      if (needsApproval) await handleApproval();
+      executePayment({
         token: formData.token.address,
         totalInNumber: total!,
         total: BigInt(parseUnits(String(total), formData.token.decimal)),
@@ -126,45 +121,20 @@ export default function Step2Review({ formData, fee, total, goBack }: Props) {
         Edit Again
         <Pencil className="size-3" />
       </button>
-
-      {needsApproval ? (
-        <button
-          onClick={handleApproval}
-          disabled={isApproving}
-          className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed"
-        >
-          {isApproving ? (
-            <>
-              <Spinner />
-              <span>Approving...</span>
-            </>
-          ) : (
-            <>Approve {formData.token.symbol}</>
-          )}
-        </button>
-      ) : (
-        <button
-          onClick={handleExecute}
-          disabled={isExecuting}
-          className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed"
-        >
-          {isExecuting ? (
-            <>
-              <Spinner />
-              <span>Processing...</span>
-            </>
-          ) : (
-            "Process Payment"
-          )}
-        </button>
-      )}
-
-      {approvalDone && (
-        <div className="flex items-center justify-center gap-2 text-green-600 text-sm">
-          <Check className="size-4" />
-          Token approved – ready to process payment
-        </div>
-      )}
+      <button
+        onClick={handleExecute}
+        disabled={isExecuting}
+        className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-lg bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:bg-slate-200 disabled:text-wp disabled:cursor-not-allowed"
+      >
+        {isExecuting ? (
+          <>
+            <Spinner />
+            <span>Processing...</span>
+          </>
+        ) : (
+          "Process Payment"
+        )}
+      </button>
     </div>
   );
 }
