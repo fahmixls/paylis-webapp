@@ -7,11 +7,15 @@ import {
 
 export default [
   index("pages/home/index.tsx"),
-  ...prefix("dashboard", [index("pages/dashboard/index.tsx")]),
+  ...prefix("dashboard", [
+    index("pages/dashboard/index.tsx"),
+    route("outgoing", "pages/dashboard/send-payment.tsx"),
+  ]),
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
   route("transaction/:id", "pages/transaction/index.tsx"),
   route("transfer", "pages/transfer/index.tsx"),
+  route("gateway", "pages/transfer/gateway.tsx"),
   route("faucet", "pages/faucet/index.tsx"),
   ...prefix("api/auth", [
     route("nonce", "api/auth/nonce.ts"),

@@ -8,10 +8,7 @@ import { ERC20_ABI, PAYMENT_FORWARDER_ADDRESS } from "~/lib/constants";
 import { toast } from "sonner";
 import { usePayRelay } from "~/hooks/usePayment";
 import { Speed } from "@openzeppelin/relayer-sdk";
-
-const Spinner = () => (
-  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-);
+import { Spinner } from "~/components/derived/Spinner";
 
 type Props = {
   formData: FormData;

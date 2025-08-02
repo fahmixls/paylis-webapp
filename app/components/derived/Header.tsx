@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
 import type { User } from "~/db/schema";
 import { cn, shortenAddress } from "~/lib/utils";
-import type { loader } from "~/pages/dashboard/layout";
+import type { loader } from "~/pages/dashboard";
 
 const MenuAside = ({
   isOpen,
@@ -28,7 +28,7 @@ const MenuAside = ({
       aria-labelledby="menu-heading"
       className={cn(
         "transition-all duration-300 shadow-lg ease-in w-[18rem] h-full fixed left-auto z-50 top-0 flex justify-start",
-        isOpen ? "translate-x-0 " : `-translate-x-[18rem]`,
+        isOpen ? "translate-x-0 " : `-translate-x-[18rem]`
       )}
     >
       <nav
@@ -56,22 +56,6 @@ const MenuAside = ({
         <ul className="space-y-2 text-wp">
           <li>
             <a
-              href="/"
-              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
-            >
-              Home
-            </a>
-          </li>
-          <li>
-            <a
-              href="/about"
-              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
-            >
-              About
-            </a>
-          </li>
-          <li>
-            <a
               href="/dashboard"
               className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
@@ -80,10 +64,18 @@ const MenuAside = ({
           </li>
           <li>
             <a
-              href="/docs"
+              href="/dashboard/outgoing"
               className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
-              Docs
+              Sent Payments History
+            </a>
+          </li>
+          <li>
+            <a
+              href="/transfer"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
+            >
+              Send Payment
             </a>
           </li>
         </ul>

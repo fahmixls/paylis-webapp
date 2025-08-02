@@ -68,7 +68,7 @@ export async function loader({ request }: Route.LoaderArgs) {
           and(
             lt(transactions.createdAt, query[query.length - 1].createdAt),
             sql`lower(${
-              transactions.recipientAddress
+              transactions.payerAddress
             }) = ${user.address.toLowerCase()}`
           )
         )
@@ -81,7 +81,7 @@ export async function loader({ request }: Route.LoaderArgs) {
           and(
             gt(transactions.createdAt, query[0].createdAt),
             sql`lower(${
-              transactions.recipientAddress
+              transactions.payerAddress
             }) = ${user.address.toLowerCase()}`
           )
         )
@@ -103,10 +103,10 @@ export default function Dashboard() {
   const nav = useNavigate();
 
   const handleNext = (i: number | string) => {
-    nav(`/dashboard?next=${i}`);
+    nav(`/dashboard/sent-payment?next=${i}`);
   };
   const handlePrevious = (i: number | string) => {
-    nav(`/dashboard?prev=${i}`);
+    nav(`/dashboard/sent-payment?prev=${i}`);
   };
   return (
     <div className="w-full grid grid-rows-[auto_1fr_auto] min-h-screen">
@@ -114,12 +114,13 @@ export default function Dashboard() {
       <div>
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-800">
-            Incoming Payments
+            Outgoing Payments
           </h2>
           <p className="text-sm text-gray-600">
-            See the payments you've received.
+            Review all payments you've sent.
           </p>
         </div>
+
         <div className="h-full">
           <TransactionTable
             data={data}
