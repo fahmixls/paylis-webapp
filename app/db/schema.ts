@@ -21,7 +21,7 @@ export const users = pgTable(
   },
   (table) => ({
     addressIdx: index("idx_users_address").on(table.address),
-  }),
+  })
 );
 
 export const sessions = pgTable(
@@ -38,7 +38,7 @@ export const sessions = pgTable(
   (table) => ({
     sessionTokenIdx: index("idx_sessions_token").on(table.sessionToken),
     expiresAtIdx: index("idx_sessions_expires").on(table.expiresAt),
-  }),
+  })
 );
 
 export const merchants = pgTable(
@@ -55,13 +55,15 @@ export const merchants = pgTable(
     website: varchar("website", { length: 255 }),
     logoUrl: varchar("logo_url", { length: 255 }),
 
+    apiKey: varchar("api_key", { length: 255 }).notNull().unique(),
+
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_merchants_user_id").on(table.userId),
     uniqueUser: unique("uq_merchants_user_id").on(table.userId), // Enforce 1:1 relation
-  }),
+  })
 );
 
 export const transactions = pgTable(
@@ -85,16 +87,37 @@ export const transactions = pgTable(
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     confirmedAt: timestamp("confirmed_at"),
+    orderId: varchar("order_id", { length: 78 }),
   },
   (table) => ({
     payerIdx: index("idx_transactions_sender").on(table.payerAddress),
     recipientIdx: index("idx_transactions_recipient").on(
-      table.recipientAddress,
+      table.recipientAddress
     ),
     txHashIdx: index("idx_transactions_tx_hash").on(table.txHash),
-  }),
+  })
 );
 
+export const paymentIntents = pgTable("payment_intents", {
+  id: serial("id").primaryKey(),
+  orderId: varchar("order_id", { length: 78 }),
+  tokenAddress: varchar("token_address", { length: 42 }).notNull(),
+
+  amount: numeric("amount", { precision: 78, scale: 0 }).notNull(),
+  fee: numeric("fee", { precision: 78, scale: 0 }).notNull(),
+  total: numeric("total", { precision: 78, scale: 0 }).notNull(),
+
+  merchantId: integer("merchant_id").references(() => merchants.id, {
+    onDelete: "set null",
+  }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"),
+});
+
+export type PaymentIntent = typeof paymentIntents.$inferSelect;
+export type NewPaymentIntent = typeof paymentIntents.$inferInsert;
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;
 export type User = typeof users.$inferSelect;

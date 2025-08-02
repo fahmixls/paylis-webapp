@@ -6,7 +6,7 @@ import { getSessionFromRequest } from "~/lib/session.server";
 import { verifySession } from "~/lib/auth.server";
 import TransactionTable from "../../components/derived/TransactionTable";
 import { db } from "~/db/connection";
-import { and, asc, desc, eq, gt, lt, sql } from "drizzle-orm";
+import { and, desc, gt, lt, sql } from "drizzle-orm";
 import { transactions, type Transaction } from "~/db/schema";
 
 export async function loader({ request }: Route.LoaderArgs) {

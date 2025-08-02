@@ -28,3 +28,17 @@ export function shortenAddress(address: string | Address, start = 6, end = 4) {
   if (!address) return "";
   return `${address.slice(0, start)}...${address.slice(-end)}`;
 }
+
+export function maskApiKey(
+  key: string,
+  visibleStart = 4,
+  visibleEnd = 4
+): string {
+  if (!key || key.length <= visibleStart + visibleEnd) return "***";
+  const maskedLength = key.length - visibleStart - visibleEnd;
+  return (
+    key.slice(0, visibleStart) +
+    "*".repeat(maskedLength) +
+    key.slice(key.length - visibleEnd)
+  );
+}

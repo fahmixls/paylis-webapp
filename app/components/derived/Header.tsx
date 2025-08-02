@@ -64,6 +64,14 @@ const MenuAside = ({
           </li>
           <li>
             <a
+              href="/dashboard/merchant"
+              className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
+            >
+              Merchant
+            </a>
+          </li>
+          <li>
+            <a
               href="/dashboard/outgoing"
               className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >

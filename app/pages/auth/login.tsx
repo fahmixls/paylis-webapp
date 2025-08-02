@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { SiweMessage } from "siwe";
 import { redirect } from "react-router";
 import type { Route } from "./+types/login";
@@ -123,7 +123,7 @@ export default function AuthLogin() {
             }
           },
           onError: (error) => setError(error.message),
-        },
+        }
       );
     } catch {
       setError("Unknown error");

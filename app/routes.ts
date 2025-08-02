@@ -10,12 +10,13 @@ export default [
   ...prefix("dashboard", [
     index("pages/dashboard/index.tsx"),
     route("outgoing", "pages/dashboard/send-payment.tsx"),
+    route("merchant", "pages/dashboard/merchant.tsx"),
   ]),
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
   route("transaction/:id", "pages/transaction/index.tsx"),
   route("transfer", "pages/transfer/index.tsx"),
-  route("gateway", "pages/transfer/gateway.tsx"),
+  route("checkout", "pages/transfer/gateway.tsx"),
   route("faucet", "pages/faucet/index.tsx"),
   ...prefix("api/auth", [
     route("nonce", "api/auth/nonce.ts"),
@@ -24,5 +25,9 @@ export default [
     route("logout", "api/auth/logout.ts"),
   ]),
   ...prefix("api/transaction", [index("api/transaction/submit.ts")]),
+  ...prefix("api/checkout", [index("api/transaction/checkout.ts")]),
   ...prefix("api/webhook", [route("relayer", "api/webhook/relayer.ts")]),
+  ...prefix("api/merchant", [
+    route("registration", "api/merchant/registration.ts"),
+  ]),
 ] satisfies RouteConfig;
