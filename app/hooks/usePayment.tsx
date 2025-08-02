@@ -20,6 +20,7 @@ type PayParams = {
   fee: bigint;
   recipient: Address;
   speed?: Speed;
+  order?: number;
 };
 
 type HookReturn = {
@@ -93,10 +94,11 @@ export function usePayRelay(): HookReturn {
               meta: {
                 receiver: recipient,
                 token,
-                amount: totalInNumber,
+                total: totalInNumber,
                 from: userAddress,
-                receiverAmount: total - fee,
+                amount: total - fee,
               },
+              orderId: params.order,
             }),
           }
         );

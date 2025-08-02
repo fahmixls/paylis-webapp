@@ -55,9 +55,9 @@ export default function Step1Form({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (data.amount! < data.token.minAmount) {
+    if (data.amount! < data.token.min) {
       amountRef.current?.focus();
-      toast.error(`Minimum amount is ${data.token.minAmount}`);
+      toast.error(`Minimum amount is ${data.token.min}`);
       return;
     }
 
@@ -109,7 +109,7 @@ export default function Step1Form({
         icon: data.icon,
         symbol: data.symbol,
         decimal: data.decimal,
-        minAmount: data.min,
+        min: data.min,
         flat: data.flat,
       },
     }));

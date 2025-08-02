@@ -24,7 +24,6 @@ export function CopyableText({
       console.error("Failed to copy text", err);
     }
   };
-  console.log(text);
 
   return (
     <div className={cn("inline-flex items-center gap-2", className)}>

@@ -29,7 +29,6 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function TransactionPage() {
   const tx = useLoaderData<Transaction>();
   const token = getTokenByAddress(tx.tokenAddress);
-  console.log(tx);
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 bg-[url(http://api.thumbr.it/whitenoise-361x370.png?background=ffffffff&noise=5c5c5c&density=13&opacity=62)]">

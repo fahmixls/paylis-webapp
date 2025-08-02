@@ -23,7 +23,8 @@ export async function action({ request }: Route.ActionArgs) {
   try {
     const {
       data,
-      meta: { from, receiver, amount, token, receiverAmount },
+      orderId,
+      meta: { from, receiver, total, token, amount },
     } = await request.json();
     const networkTransaction: NetworkTransactionRequest = {
       to: PAYMENT_FORWARDER_ADDRESS,
@@ -71,9 +72,10 @@ export async function action({ request }: Route.ActionArgs) {
       createdAt: new Date(created_at),
       payerAddress: from,
       recipientAddress: receiver,
-      amount: receiverAmount,
+      amount: amount,
       tokenAddress: token,
       chainId: 4202,
+      ...(orderId && { orderId }),
     });
 
     return new Response(JSON.stringify({ id: hash }), { status: 200 });

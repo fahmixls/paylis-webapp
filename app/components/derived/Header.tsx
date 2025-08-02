@@ -1,4 +1,4 @@
-import { ChevronRight, Menu, X } from "lucide-react";
+import { ChevronRight, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
 import type { User } from "~/db/schema";
@@ -53,7 +53,7 @@ const MenuAside = ({
         <h2 id="menu-heading" className="sr-only">
           Main menu
         </h2>
-        <ul className="space-y-2 text-wp">
+        <ul className="space-y-2 text-wp h-full">
           <li>
             <a
               href="/dashboard"
@@ -75,7 +75,7 @@ const MenuAside = ({
               href="/dashboard/outgoing"
               className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
-              Sent Payments History
+              History
             </a>
           </li>
           <li>
@@ -84,6 +84,16 @@ const MenuAside = ({
               className="block px-3 py-2 rounded hover:bg-gray-200 font-medium"
             >
               Send Payment
+            </a>
+          </li>
+          <div className="h-auto" />
+          <li>
+            <a
+              href="/logout"
+              className="flex items-center gap-3 px-3 py-2 absolute left-4 bottom-4 rounded hover:bg-gray-200 font-medium"
+            >
+              Logout
+              <LogOut className="size-4" />
             </a>
           </li>
         </ul>

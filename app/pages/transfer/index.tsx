@@ -9,12 +9,14 @@ export type FormData = {
   sender: Address | null;
   receiver: Address | null;
   amount: number | null;
+  total: number | null;
+  fee: number | null;
   token: {
     address: Address;
     symbol: string;
     icon: string;
     decimal: number;
-    minAmount: number;
+    min: number;
     flat: number;
   };
 };
@@ -31,9 +33,11 @@ export default function Payment() {
       symbol: "",
       icon: "",
       decimal: 18,
-      minAmount: 0,
+      min: 0,
       flat: 0,
     },
+    total: 0,
+    fee: 0,
   });
   const [step, setStep] = useState<1 | 2>(1);
   const StepIndicator = ({
