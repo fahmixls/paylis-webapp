@@ -7,16 +7,16 @@ import { liskSepolia } from "viem/chains";
 export const MockToken: Array<TokenType> = [
   {
     address: "0xcA0A2cE00d5b6Dd22C65731D8F64939537595D01",
-    name: "Mock IDRX",
+    name: "Mock Indonesian Rupiah Token",
     symbol: "IDRX",
     icon: "/assets/idrx.svg",
     decimal: 2,
-    min: 1000,
+    min: 500,
     flat: 500,
   },
   {
     address: "0x0A218c6a23Ede0395474e9d875c7fE2BF859Cf10",
-    name: "Mock USDC",
+    name: "Mock USD Coin",
     symbol: "USDC",
     icon: "/assets/usdc.svg",
     decimal: 6,

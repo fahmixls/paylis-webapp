@@ -1,8 +1,9 @@
 import { useRef } from "react";
+import type { Address } from "viem";
 import { useAccount } from "wagmi";
 
 type WalletLifecycleProps = {
-  onConnect?: (address: string) => void;
+  onConnect?: (address: Address) => void;
   onDisconnect?: () => void;
 };
 

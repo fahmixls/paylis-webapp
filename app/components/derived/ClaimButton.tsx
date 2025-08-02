@@ -3,9 +3,9 @@ import { Button } from "~/components/ui/button";
 import { Loader2, CheckCircle } from "lucide-react";
 import type { Address } from "viem";
 import { toast } from "sonner";
-import { publicClient } from "~/providers";
+import { config, publicClient } from "~/providers";
 import { ERC20_ABI } from "~/lib/constants";
-import { useAccount } from "wagmi";
+import { writeContract } from "@wagmi/core";
 
 const STORAGE_PREFIX = "daily_click_";
 
@@ -16,31 +16,42 @@ export function DailyClaimButton({
   icon,
   symbol,
   amount,
+  activate,
+  userAddress,
 }: {
   address: Address;
   icon: string;
   symbol: string;
-  amount: bigint;
+  amount: number;
+  activate: boolean;
+  userAddress: Address;
 }) {
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
-  const { address: userAddress } = useAccount();
 
   const handleClaim = async () => {
-    setLoading(true);
-    const hash = await publicClient.readContract({
-      address: address,
-      abi: ERC20_ABI,
-      functionName: "publicMint",
-      args: [amount],
-    });
-    await publicClient.waitForTransactionReceipt({ hash: hash as Address });
-    const key = `${STORAGE_PREFIX}${userAddress}`;
-    const today = getToday();
-    localStorage.setItem(key, today);
-    setDisabled(true);
-    toast.success("🎉 Reward claimed!");
-    setLoading(false);
+    try {
+      setLoading(true);
+      const hash = await writeContract(config, {
+        address,
+        abi: ERC20_ABI,
+        functionName: "publicMint",
+        args: [amount],
+        account: userAddress,
+      });
+      await publicClient.waitForTransactionReceipt({ hash: hash as Address });
+      const key = `${STORAGE_PREFIX}${userAddress}`;
+      const today = getToday();
+      localStorage.setItem(key, today);
+      setDisabled(true);
+      toast.success("🎉 Reward claimed!");
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      toast.error("Failed to claim faucet");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -65,14 +76,14 @@ export function DailyClaimButton({
   return (
     <Button
       onClick={handleClaim}
-      disabled={disabled || loading}
+      disabled={disabled || loading || !activate}
       variant="outline"
-      className="flex items-center gap-2 text-wp px-4 py-2"
+      className="flex items-center gap-2 w-full h-12 text-wp px-4 py-2"
     >
       {loading ? <Loader2 className="animate-spin h-4 w-4" /> : null}
       {!loading && disabled ? <CheckCircle className="h-4 w-4" /> : null}
       <div className="flex items-center gap-2 text-lg font-semibold text-wp">
-        Claim <img className="size-4" src={icon} alt={symbol} />
+        Claim {amount} <img className="size-4" src={icon} alt={symbol} />
         {symbol}
       </div>
     </Button>
