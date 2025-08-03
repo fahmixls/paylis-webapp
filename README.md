@@ -1,35 +1,77 @@
-# Welcome to React Router!
+# Paylis
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Paylis is a full-stack payment application that allows users to send and receive payments, with a focus on cryptocurrency transactions. It provides a merchant registration system, transaction management, and a faucet for testing purposes.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **User Authentication:** Secure user login and session management using SIWE (Sign-In with Ethereum).
+- **Merchant Registration:** Allows users to register as merchants to receive payments.
+- **Payment Gateway:** Facilitates payments using various cryptocurrencies.
+- **Transaction History:** View and manage transaction history.
+- **Cryptocurrency Faucet:** A faucet to get test tokens for development and testing.
+- **Relayer Support:** Utilizes a relayer for gasless transactions.
+
+## Tech Stack
+
+- **Frontend:** React, Vite, React Router, Tailwind CSS
+- **Backend:** Node.js, Express (via react-router-serve)
+- **Database:** PostgreSQL with NeonDB
+- **ORM:** Drizzle ORM
+- **Blockchain:** Ethers.js, Wagmi, Viem for wallet interaction and blockchain communication.
+- **Deployment:** Docker, Netlify
 
 ## Getting Started
 
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v20 or higher)
+- [pnpm](https://pnpm.io/)
+- [Docker](https://www.docker.com/) (for local development and deployment)
+
 ### Installation
 
-Install the dependencies:
+1.  Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd apps
+    ```
+2.  Install the dependencies:
+    ```bash
+    pnpm install
+    ```
 
-```bash
-npm install
+### Environment Variables
+
+Create a `.env` file in the root of the project and add the following environment variables. You can refer to `.env.example` for a template.
+
 ```
+VITE_PROJECT_ID=
+VITE_RELAYER_API_KEY=
+VITE_RELAYER_API_SECRET=
+
+DATABASE_URL=
+JWT_SECRET=
+PRIVATE_KEY=
+```
+
+### Database Setup
+
+1.  Make sure you have a PostgreSQL database running.
+2.  Run the database migrations:
+    ```bash
+    pnpm run db:migrate
+    ```
+3.  (Optional) Seed the database with initial data:
+    ```bash
+    pnpm run db:seed
+    ```
 
 ### Development
 
-Start the development server with HMR:
+Start the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
@@ -39,7 +81,7 @@ Your application will be available at `http://localhost:5173`.
 Create a production build:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ## Deployment
@@ -49,10 +91,10 @@ npm run build
 To build and run using Docker:
 
 ```bash
-docker build -t my-app .
+docker build -t paylis-app .
 
 # Run the container
-docker run -p 3000:3000 my-app
+docker run -p 3000:3000 paylis-app
 ```
 
 The containerized application can be deployed to any platform that supports Docker, including:
@@ -64,23 +106,9 @@ The containerized application can be deployed to any platform that supports Dock
 - Fly.io
 - Railway
 
-### DIY Deployment
+### Netlify Deployment
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+This project is configured for deployment on Netlify. Simply connect your Git repository to Netlify and it will automatically build and deploy the application.
 
 ---
 
