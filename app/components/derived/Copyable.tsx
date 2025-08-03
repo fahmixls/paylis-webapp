@@ -1,17 +1,19 @@
 import { Check, Clipboard } from "lucide-react";
 import { useState } from "react";
-import { cn, maskApiKey } from "~/lib/utils";
+import { cn, maskApiKey, shortenAddress } from "~/lib/utils";
 
 type CopyableTextProps = {
   text: string;
   className?: string;
   copyButtonClassName?: string;
+  isSecret: boolean;
 };
 
 export function CopyableText({
   text,
   className,
   copyButtonClassName,
+  isSecret,
 }: CopyableTextProps) {
   const [copied, setCopied] = useState(false);
 
@@ -25,10 +27,12 @@ export function CopyableText({
     }
   };
 
+  const word = isSecret ? maskApiKey(text) : text;
+
   return (
     <div className={cn("inline-flex items-center gap-2", className)}>
       <span className="font-mono text-sm truncate max-w-xs">
-        {maskApiKey(text)}
+        {shortenAddress(word, 8, 16)}
       </span>
       <button
         onClick={handleCopy}

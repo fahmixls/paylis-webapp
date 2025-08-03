@@ -20,7 +20,7 @@ import {
 } from "~/db/schema";
 import { db } from "~/db/connection";
 import { eq, or, sql } from "drizzle-orm";
-import { useLoaderData } from "react-router";
+import { redirect, useLoaderData } from "react-router";
 import { calculateFees, getTokenByAddress } from "~/lib/utils";
 import { useWalletLifecycle } from "~/hooks/useWalletLifecycle";
 import { RefreshCcw } from "lucide-react";
@@ -55,6 +55,9 @@ export async function loader({ params }: Route.LoaderArgs) {
     .select()
     .from(transactions)
     .where(eq(transactions.orderId, rows[0].id as unknown as string));
+  if (transactionRow.length > 0) {
+    redirect(`/transaction/${transactionRow[0].txHash}`);
+  }
   return Response.json({
     order: rows[0],
     user: dataUser.rows[0].address,
@@ -164,10 +167,10 @@ export default function Payment() {
   };
 
   const handleExecute = async () => {
+    if (needsApproval) await handleApproval();
     setIsExecuting(true);
     toast.loading("Processing your payment...", { id: "pay" });
     try {
-      if (needsApproval) await handleApproval();
       executePayment({
         token: data.token.address,
         totalInNumber: data.total!,
@@ -253,7 +256,7 @@ export default function Payment() {
               disabled={isExecuting || isLoading || isPayed}
               className="inline-flex w-full text-center justify-center items-center gap-2 px-9 py-3 rounded-sm bg-wp text-white font-semibold shadow-md hover:shadow-lg hover:scale-101 transition-transform duration-200 ease-in-out disabled:bg-slate-200 disabled:text-wp disabled:cursor-not-allowed"
             >
-              {isExecuting ? (
+              {isExecuting || isLoading ? (
                 <>
                   <Spinner />
                   <span>Processing...</span>

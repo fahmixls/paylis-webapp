@@ -30,14 +30,21 @@ const columns = [
   }),
   columnHelper.accessor("amount", {
     header: "Amount",
-    cell: (info) => (
-      <div className="truncate max-w-xs md:max-w-none">{info.getValue()}</div>
-    ),
+    cell: (info) => {
+      const token = getTokenByAddress(info.row.original.tokenAddress);
+      const index = token?.decimal || 0;
+
+      const result =
+        index !== -1
+          ? info.getValue().slice(0, index) + info.getValue().slice(index + 1)
+          : info.getValue();
+      return <div className="truncate max-w-xs md:max-w-none">{result}</div>;
+    },
   }),
   columnHelper.accessor("tokenAddress", {
     header: "Token",
     cell: (info) => {
-      const token = getTokenByAddress(info.getValue());
+      const token = getTokenByAddress(info.row.original.tokenAddress);
       return (
         <div className="truncate max-w-xs md:max-w-none">
           {

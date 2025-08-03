@@ -23,7 +23,7 @@ export default function ProductSection() {
         "Seamlessly accept stablecoin payments on your WooCommerce store. Fast, secure, and borderless.",
       icon: <ShoppingCart className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Install Plugin",
-      href: "/dashboard",
+      href: "/dashboard/merchant",
     },
     {
       title: "Easy Digital Downloads Plugin",

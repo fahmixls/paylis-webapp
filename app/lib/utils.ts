@@ -34,7 +34,9 @@ export function maskApiKey(
   visibleStart = 4,
   visibleEnd = 4
 ): string {
-  if (!key || key.length <= visibleStart + visibleEnd) return "***";
+  if (typeof key !== "string") return "***";
+  if (key.length <= visibleStart + visibleEnd) return "***";
+
   const maskedLength = key.length - visibleStart - visibleEnd;
   return (
     key.slice(0, visibleStart) +

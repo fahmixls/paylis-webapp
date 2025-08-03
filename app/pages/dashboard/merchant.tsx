@@ -23,20 +23,30 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const dataMerchant = await db.execute(sql`
-    select ${merchants.apiKey}
+    select *
     from ${merchants}
     left join ${users} on ${users.address} = ${user.address}
     where ${merchants.userId} = ${users.id}
     limit 1
   `);
 
-  return { user, key: dataMerchant.rows[0].api_key as string | null };
+  return {
+    user,
+    merchant: {
+      name: dataMerchant.rowCount > 0 ? dataMerchant.rows[0].name : "",
+      email: dataMerchant.rowCount > 0 ? dataMerchant.rows[0].email : "",
+      website: dataMerchant.rowCount > 0 ? dataMerchant.rows[0].website : "",
+      apiKey: dataMerchant.rowCount > 0 ? dataMerchant.rows[0].apiKey : "",
+    },
+    registered: dataMerchant.rowCount > 0,
+  };
 }
 
-export default function Merchant() {
+export default function DashboardMerchant() {
   const {
     user: { address },
-    key: existingKey,
+    merchant,
+    registered,
   } = useLoaderData<typeof loader>();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -46,14 +56,14 @@ export default function Merchant() {
     name: string;
     website: string;
   }>({
-    email: "",
-    name: "",
-    website: "",
+    email: merchant?.email ? merchant.email : "",
+    name: merchant?.name ? merchant.name : "",
+    website: merchant?.website ? merchant.website : "",
   });
 
   useEffect(() => {
-    if (existingKey) setKey(existingKey);
-  }, [existingKey]);
+    if (merchant.apiKey) setKey(merchant.apiKey as unknown as string);
+  }, [merchant.apiKey]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,7 +79,11 @@ export default function Merchant() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address, ...data }),
+          body: JSON.stringify({
+            update: registered ? "y" : "n",
+            address,
+            ...data,
+          }),
         }
       );
 
@@ -98,75 +112,77 @@ export default function Merchant() {
         <p className="text-slate-600">
           Copy API Key and Wallet Address then paste it into plugin setting page
         </p>
-        <div className="flex h-full py-12 w-full">
+        <div className="h-full py-12 w-full">
+          <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-sm">
+            <div className="grid w-full gap-3">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                required
+                value={data.email!}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid w-full gap-3">
+              <Label htmlFor="name">Business Name</Label>
+              <Input
+                id="name"
+                type="text"
+                name="name"
+                required
+                value={data.name!}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid w-full gap-3">
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                type="text"
+                name="website"
+                required
+                value={data.website!}
+                onChange={handleInputChange}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex w-full justify-center mt-6 items-center gap-2 rounded-md px-8 py-3 text-base font-semibold shadow transition-all duration-200 ease-in-out
+               bg-wp text-white hover:shadow-lg hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wp
+               disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <LogIn className="w-5 h-5 animate-pulse" />
+                  Submitting...
+                </>
+              ) : registered ? (
+                "Update"
+              ) : (
+                "Submit"
+              )}
+            </button>
+          </form>
+          <br />
           {key ? (
-            <div className="w-full space-y-4">
+            <div className="w-full space-y-4 mt-8">
               <div>
                 <Label className="text-muted-foreground text-sm mb-1 block">
                   API Key
                 </Label>
-                <CopyableText text={key} />
+                <CopyableText isSecret={true} text={key} />
               </div>
               <div>
                 <Label className="text-muted-foreground text-sm mb-1 block">
                   Wallet Address
                 </Label>
-                <CopyableText text={address} />
+                <CopyableText isSecret={false} text={address} />
               </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 w-full">
-              <div className="grid w-full gap-3">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  required
-                  value={data.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label htmlFor="name">Business Name</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  name="name"
-                  required
-                  value={data.name}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="grid w-full gap-3">
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  type="text"
-                  name="website"
-                  required
-                  value={data.website}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="inline-flex w-full justify-center mt-6 max-w-xs items-center gap-2 rounded-md px-8 py-3 text-base font-semibold shadow transition-all duration-200 ease-in-out
-               bg-wp text-white hover:shadow-lg hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wp
-               disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <LogIn className="w-5 h-5 animate-pulse" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </button>
-            </form>
-          )}
+          ) : null}
         </div>
         <div className="absolute left-0 bottom-0 w-full flex justify-center">
           <Footer />

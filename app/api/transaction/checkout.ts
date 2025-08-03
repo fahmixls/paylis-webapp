@@ -1,5 +1,5 @@
 import { db } from "~/db/connection";
-import type { Route } from "./+types/submit";
+import type { Route } from "./+types/checkout";
 import {
   merchants,
   paymentIntents,
@@ -7,7 +7,7 @@ import {
   type NewPaymentIntent,
 } from "~/db/schema";
 import { calculateFees, getTokenByAddress } from "~/lib/utils";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export async function action({ request }: Route.ActionArgs) {
   if (request.method !== "POST") {
@@ -18,15 +18,31 @@ export async function action({ request }: Route.ActionArgs) {
     const body = await request.json();
     const IDRX_ADDRESS = "0xcA0A2cE00d5b6Dd22C65731D8F64939537595D01";
     const token = getTokenByAddress(IDRX_ADDRESS);
-    const { order_id, amount, address } = body;
+    const { amount, address } = body;
+    const order_id = new URL(request.url).searchParams.get(
+      "orderId"
+    ) as unknown as string;
     const fee = calculateFees(amount, IDRX_ADDRESS);
+    const existingIntent = await db
+      .select({ id: paymentIntents.id })
+      .from(paymentIntents)
+      .where(eq(paymentIntents.orderId, order_id));
+    if (existingIntent.length > 0) {
+      const paymentUrl = `${new URL(request.url).origin}/checkout/${order_id}`;
+      const response = {
+        payment_url: paymentUrl,
+        payment_id: order_id,
+        status: "created",
+      };
+      return Response.json(response);
+    }
     const dataUser = await db.execute(sql`
-          select ${merchants.id}
-          from ${merchants}
-          left join ${users} on ${users.id} = ${merchants.userId}
-          where ${users.address} = ${address}
-          limit 1
-        `);
+      select ${merchants.id}
+      from ${merchants}
+      left join ${users} on ${users.id} = ${merchants.userId}
+      where ${users.address} = ${address}
+      limit 1
+    `);
     const intent: NewPaymentIntent = {
       orderId: order_id,
       amount,
@@ -54,7 +70,9 @@ export async function action({ request }: Route.ActionArgs) {
 
 export async function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
-  const orderId = url.searchParams.get("payment_id");
+  const orderId = new URL(request.url).searchParams.get(
+    "orderId"
+  ) as unknown as string;
 
   if (!orderId) {
     return Response.json({ error: "Payment ID required" }, { status: 400 });
