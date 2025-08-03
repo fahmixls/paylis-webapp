@@ -23,7 +23,7 @@ export default function ProductSection() {
         "Seamlessly accept stablecoin payments on your WooCommerce store. Fast, secure, and borderless.",
       icon: <ShoppingCart className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Install Plugin",
-      href: "/dashboard/merchant",
+      href: "/download/woocommerce",
     },
     {
       title: "Easy Digital Downloads Plugin",
@@ -31,7 +31,7 @@ export default function ProductSection() {
         "Enable crypto payments for digital products with stablecoins. No volatility, no friction.",
       icon: <Store className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Get Extension",
-      href: "/dashboard",
+      href: "/coming-soon",
     },
     {
       title: "Creator Tipping Platform",
@@ -39,7 +39,7 @@ export default function ProductSection() {
         "Let your fans tip using stablecoins. Perfect for creators, streamers, and educators.",
       icon: <DollarSign className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "Start Earning",
-      href: "/dashboard",
+      href: "/soming-soon",
     },
     {
       title: "API and SDK Integration",
@@ -47,7 +47,7 @@ export default function ProductSection() {
         "Integrate stablecoin payments into any platform using our secure REST API and developer-friendly SDK.",
       icon: <Wallet className="w-6 h-6 text-wp" aria-hidden="true" />,
       cta: "View Docs",
-      href: "/dashboard",
+      href: "/coming-soon",
     },
   ];
 

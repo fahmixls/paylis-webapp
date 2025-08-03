@@ -12,6 +12,10 @@ export default [
     route("outgoing", "pages/dashboard/send-payment.tsx"),
     route("merchant", "pages/dashboard/merchant.tsx"),
   ]),
+  ...prefix("download", [
+    route("woocommerce", "pages/dashboard/download-woo.tsx"),
+  ]),
+  route("coming-soon", "pages/home/coming-soon.tsx"),
   route("login", "pages/auth/login.tsx"),
   route("logout", "pages/auth/logout.tsx"),
   route("transaction/:id", "pages/transaction/index.tsx"),
