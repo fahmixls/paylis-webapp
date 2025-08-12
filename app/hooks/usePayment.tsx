@@ -126,10 +126,6 @@ export function usePayRelay(): HookReturn {
           throw new Error("Transaction hash missing from backend response");
         }
 
-        await publicClient.waitForTransactionReceipt({
-          hash: id as `0x${string}`,
-        });
-
         nav(`/transaction/${id}`);
       } catch (err) {
         const errorMessage =
