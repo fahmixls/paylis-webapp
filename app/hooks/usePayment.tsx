@@ -49,13 +49,12 @@ export function usePayRelay(): HookReturn {
         const { total, token, recipient, fee, totalInNumber } = params;
 
         // 1. Get nonce from forwarder
-        const nonce = BigInt(0);
-        /*await publicClient.readContract({
+        const nonce = await publicClient.readContract({
           address: PAYMENT_FORWARDER_ADDRESS,
           abi: PAYMENT_FORWARDER_ABI,
           functionName: "getNonce",
           args: [userAddress],
-        });*/
+        });
 
         // 2. Prepare EIP-712 typed data
         const signed: SplitPayment = {
@@ -121,14 +120,14 @@ export function usePayRelay(): HookReturn {
           throw new Error(err?.error || "Transaction submission failed");
         }
 
-        const { id, txHash } = await submitRes.json();
+        const { id } = await submitRes.json();
 
-        if (!txHash) {
+        if (!id) {
           throw new Error("Transaction hash missing from backend response");
         }
 
         await publicClient.waitForTransactionReceipt({
-          hash: txHash as `0x${string}`,
+          hash: id as `0x${string}`,
         });
 
         nav(`/transaction/${id}`);
