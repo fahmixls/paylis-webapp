@@ -167,11 +167,15 @@ export default function Payment() {
   };
 
   const handleExecute = async () => {
-    if (needsApproval) await handleApproval();
+    if (needsApproval) {
+      await handleApproval();
+    }
+
     setIsExecuting(true);
     toast.loading("Processing your payment...", { id: "pay" });
+
     try {
-      executePayment({
+      await executePayment({
         token: data.token.address,
         totalInNumber: data.total!,
         total: BigInt(parseUnits(String(data.total), data.token.decimal)),
@@ -180,9 +184,9 @@ export default function Payment() {
         fee: BigInt(parseUnits(String(data.fee), data.token.decimal)),
         order: order.id,
       });
+
       toast.success("Payment successful!", { id: "pay" });
-    } catch (e) {
-      console.error(e);
+    } catch {
       toast.error("Payment failed. Please try again later.", { id: "pay" });
     } finally {
       setIsExecuting(false);

@@ -26,7 +26,7 @@ type PayParams = {
 type HookReturn = {
   isLoading: boolean;
   error: string | null;
-  executePayment: (params: PayParams) => void;
+  executePayment: (params: PayParams) => Promise<void>; // <-- fixed type
 };
 
 export function usePayRelay(): HookReturn {
@@ -39,18 +39,24 @@ export function usePayRelay(): HookReturn {
   const executePayment = useCallback(
     async (params: PayParams) => {
       if (!userAddress || !chainId) {
-        return { success: false, error: "Wallet not connected" };
+        throw new Error("Wallet not connected");
       }
+
       setIsLoading(true);
       setError(null);
+
       try {
         const { total, token, recipient, fee, totalInNumber } = params;
+
+        // 1. Get nonce from forwarder
         const nonce = await publicClient.readContract({
           address: PAYMENT_FORWARDER_ADDRESS,
           abi: PAYMENT_FORWARDER_ABI,
           functionName: "getNonce",
           args: [userAddress],
         });
+
+        // 2. Prepare EIP-712 typed data
         const signed: SplitPayment = {
           from: userAddress,
           to: recipient,
@@ -58,14 +64,18 @@ export function usePayRelay(): HookReturn {
           total,
           fee,
           nonce: nonce as bigint,
-          deadline: BigInt(Math.floor(Date.now() / 1000) + 600),
+          deadline: BigInt(Math.floor(Date.now() / 1000) + 600), // 10 min
         };
+
+        // 3. Sign typed data
         const signature = await signTypedData(config, {
           domain,
           types: splitPaymentTypes,
           primaryType: "SplitPayment",
           message: signed,
         });
+
+        // 4. Encode calldata for relay
         const data = encodeFunctionData({
           abi: PAYMENT_FORWARDER_ABI,
           functionName: "executeSplitPayment",
@@ -84,6 +94,8 @@ export function usePayRelay(): HookReturn {
             },
           ],
         });
+
+        // 5. Send request to backend relay
         const submitRes = await fetch(
           `${window.location.origin}/api/transaction`,
           {
@@ -102,22 +114,34 @@ export function usePayRelay(): HookReturn {
             }),
           }
         );
+
         if (!submitRes.ok) {
           const err = await submitRes.json();
           throw new Error(err?.error || "Transaction submission failed");
         }
-        const { id } = await submitRes.json();
+
+        const { id, txHash } = await submitRes.json();
+
+        if (!txHash) {
+          throw new Error("Transaction hash missing from backend response");
+        }
+
+        await publicClient.waitForTransactionReceipt({
+          hash: txHash as `0x${string}`,
+        });
+
         nav(`/transaction/${id}`);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Unknown error occurred";
         setError(errorMessage);
         console.error("PayRelay error:", err);
+        throw err; // let caller know it failed
       } finally {
         setIsLoading(false);
       }
     },
-    [userAddress, chainId, PAYMENT_FORWARDER_ADDRESS]
+    [userAddress, chainId]
   );
 
   return {
