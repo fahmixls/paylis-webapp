@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { getTokenByAddress, shortenAddress } from "~/lib/utils";
 import { db } from "~/db/connection";
 import { transactions, type Transaction } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
 import type { Route } from "./+types";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useRevalidator } from "react-router";
 import { TransactionStatusBadge } from "~/components/derived/TransactionStatusBadge";
 
 export const meta: Route.MetaFunction = () => [
@@ -29,6 +30,14 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function TransactionPage() {
   const tx = useLoaderData<Transaction>();
   const token = getTokenByAddress(tx.tokenAddress);
+
+  const revalidator = useRevalidator();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      revalidator.revalidate();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [revalidator]);
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 bg-[url(http://api.thumbr.it/whitenoise-361x370.png?background=ffffffff&noise=5c5c5c&density=13&opacity=62)]">

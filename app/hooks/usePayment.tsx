@@ -49,12 +49,13 @@ export function usePayRelay(): HookReturn {
         const { total, token, recipient, fee, totalInNumber } = params;
 
         // 1. Get nonce from forwarder
-        const nonce = await publicClient.readContract({
+        const nonce = BigInt(0);
+        /*await publicClient.readContract({
           address: PAYMENT_FORWARDER_ADDRESS,
           abi: PAYMENT_FORWARDER_ABI,
           functionName: "getNonce",
           args: [userAddress],
-        });
+        });*/
 
         // 2. Prepare EIP-712 typed data
         const signed: SplitPayment = {

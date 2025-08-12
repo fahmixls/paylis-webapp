@@ -57,12 +57,6 @@ export async function action({ request }: Route.ActionArgs) {
       await delay(1000 * Math.pow(2, attempt)); // 1s, 2s, 4s
     }
 
-    if (!hash)
-      return new Response(
-        JSON.stringify({ error: "Failed to submit transaction" }),
-        { status: 500 }
-      );
-
     if (!resData) {
       const finalTxRes = await relayersApi.getTransactionById(relayerId, txId);
       resData = finalTxRes.data.data as ApiResponseTransactionResponseData;
