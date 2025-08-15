@@ -155,6 +155,13 @@ export default function TransferV2Page() {
           functionName: "allowance",
           args: [userAddress, PAYMENT_FORWARDER_ADDRESS],
         });
+        console.log(
+          allowance,
+          parseUnits(String(order.amount), token?.decimal as number),
+          order.total,
+          order.amount,
+          token
+        );
 
         setNeedsApproval(
           (allowance as bigint) <
