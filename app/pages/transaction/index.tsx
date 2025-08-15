@@ -113,20 +113,6 @@ export default function TransactionPage() {
             <Field label="Amount">
               <Mono>{`${tx.amount} ${token?.symbol}`}</Mono>
             </Field>
-
-            <Field label="Confirmed At">
-              <Mono>
-                {tx.confirmedAt
-                  ? new Date(tx.confirmedAt).toLocaleDateString("en-EN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : "-"}
-              </Mono>
-            </Field>
           </CardContent>
         </Card>
       </div>

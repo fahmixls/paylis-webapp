@@ -17,7 +17,9 @@ body {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-wp: #21759B;
+  --color-wp: #21759b;
+  --color-logo-bg: #051440;
+  --color-logo-fg: #fdad36;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -114,9 +116,8 @@ body {
   }
 
   .pattern-bg {
-    background-image:
-      linear-gradient(#21759B11 1px, transparent 1px),
-      linear-gradient(to right, #21759B11 1px, #ffffff00 1px);
+    background-image: linear-gradient(#21759b11 1px, transparent 1px),
+      linear-gradient(to right, #21759b11 1px, #ffffff00 1px);
     background-size: 84px 84px;
     background-color: #fefefe;
   }

@@ -4,9 +4,7 @@ export default function Footer() {
       <div className="py-6 border-t border-gray-200">
         <div className="flex flex-wrap justify-between items-center gap-2">
           <div>
-            <p className="text-xs text-gray-600">
-              © 2025 Lukisan Ksatriya Labs.
-            </p>
+            <p className="text-xs text-gray-600">© 2025 Paylis Lunas Stabil.</p>
           </div>
           <ul className="flex flex-wrap items-center">
             <li className="inline-block relative pe-4 text-xs last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-1.5 before:-translate-y-1/2 before:size-[3px] before:rounded-full before:bg-gray-400">
