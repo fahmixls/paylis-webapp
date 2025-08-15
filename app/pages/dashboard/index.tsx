@@ -6,8 +6,10 @@ import { getSessionFromRequest } from "~/lib/session.server";
 import { verifySession } from "~/lib/auth.server";
 import TransactionTable from "../../components/derived/TransactionTable";
 import { db } from "~/db/connection";
-import { and, desc, gt, lt, sql } from "drizzle-orm";
+import { and, desc, gt, inArray, lt, sql } from "drizzle-orm";
 import { transactions, type Transaction } from "~/db/schema";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { TransactionStatus } from "@openzeppelin/relayer-sdk";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionToken = getSessionFromRequest(request);
@@ -19,7 +21,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   ) as unknown as string;
   const pageSize =
     (new URL(request.url).searchParams.get("pageSize") as unknown as number) ||
-    10;
+    20;
   const user = sessionToken ? await verifySession(sessionToken) : null;
 
   if (!user) {
@@ -61,6 +63,19 @@ export async function loader({ request }: Route.LoaderArgs) {
     .orderBy(desc(transactions.createdAt))
     .limit(pageSize);
 
+  const dataSummary = await db
+    .select({
+      totalPaidTransactions: sql<number>`COUNT(*)`,
+      totalRevenue: sql<string>`SUM(${transactions.amount})`,
+    })
+    .from(transactions)
+    .where(
+      inArray(transactions.status, [
+        TransactionStatus.CONFIRMED,
+        TransactionStatus.MINED,
+      ])
+    );
+
   const countOlder =
     query.length === pageSize
       ? await db.$count(
@@ -95,11 +110,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     data: query as Array<Transaction>,
     next: next as number,
     previous: previous as number,
+    summary: dataSummary[0],
   };
 }
 
 export default function Dashboard() {
-  const { data, next, previous } = useLoaderData<typeof loader>();
+  const { data, next, previous, summary } = useLoaderData<typeof loader>();
   const nav = useNavigate();
 
   const handleNext = (i: number | string) => {
@@ -112,13 +128,23 @@ export default function Dashboard() {
     <div className="w-full grid grid-rows-[auto_1fr_auto] min-h-screen">
       <Header />
       <div>
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Incoming Payments
-          </h2>
-          <p className="text-sm text-gray-600">
-            See the payments you've received.
-          </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2">
+          <Card className="rounded-none">
+            <CardHeader className="pb-2 text-sm font-medium text-muted-foreground">
+              Total Revenue
+            </CardHeader>
+            <CardContent className="text-2xl font-semibold">
+              {`${summary.totalRevenue} IDRX`}
+            </CardContent>
+          </Card>
+          <Card className="rounded-none">
+            <CardHeader className="pb-2 text-sm font-medium text-muted-foreground">
+              Successful Transactions
+            </CardHeader>
+            <CardContent className="text-2xl font-semibold">
+              {summary.totalPaidTransactions}
+            </CardContent>
+          </Card>
         </div>
         <div className="h-full">
           <TransactionTable

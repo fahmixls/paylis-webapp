@@ -112,7 +112,7 @@ export default function TransactionTable(props: TransactionTableProps) {
                         <th
                           key={header.id}
                           scope="col"
-                          className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-7 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
                           {header.isPlaceholder ? null : (
                             <div className="flex items-center gap-x-2">
@@ -151,7 +151,7 @@ export default function TransactionTable(props: TransactionTableProps) {
                   ))}
                 </tbody>
               </table>
-              <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
+              <div className="px-7 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
                 <div>
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold text-gray-800">

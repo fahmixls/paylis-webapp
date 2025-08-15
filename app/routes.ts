@@ -33,6 +33,7 @@ export default [
   ...prefix("api/checkout", [index("api/transaction/checkout.ts")]),
   ...prefix("api/webhook", [route("relayer", "api/webhook/relayer.ts")]),
   ...prefix("api/merchant", [
+    route("dashboard", "api/merchant/dashboard.ts"),
     route("registration", "api/merchant/registration.ts"),
   ]),
 ] satisfies RouteConfig;
