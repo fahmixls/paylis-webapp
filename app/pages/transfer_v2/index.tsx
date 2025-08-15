@@ -114,7 +114,7 @@ export default function TransferV2Page() {
     transactionId: string | null;
   }>();
   const { data: walletClient } = useWalletClient();
-  const [needsApproval, setNeedsApproval] = useState(false);
+  const [needsApproval, setNeedsApproval] = useState(true);
   const [isExecuting, setIsExecuting] = useState(false);
   const { executePayment } = usePayRelay();
   const [data, setData] = useState<FormData>({
@@ -197,7 +197,6 @@ export default function TransferV2Page() {
   };
 
   const handleExecute = async () => {
-    console.log("Here");
     if (needsApproval) {
       await handleApproval();
     }
