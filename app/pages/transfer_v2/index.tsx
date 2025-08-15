@@ -155,17 +155,10 @@ export default function TransferV2Page() {
           functionName: "allowance",
           args: [userAddress, PAYMENT_FORWARDER_ADDRESS],
         });
-        console.log(
-          allowance,
-          parseUnits(String(order.amount), token?.decimal as number),
-          order.total,
-          order.amount,
-          token
-        );
 
         setNeedsApproval(
           (allowance as bigint) <
-            parseUnits(String(order.amount), token?.decimal as number)
+            parseUnits(String(total), token?.decimal as number)
         );
       } catch (err) {
         console.error("Error loading allowance/fees:", err);
