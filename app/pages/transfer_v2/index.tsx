@@ -3,7 +3,11 @@ import { parseUnits, type Address } from "viem";
 import { toast } from "sonner";
 import { useDisconnect, useWalletClient } from "wagmi";
 import { usePayRelay } from "~/hooks/usePayment";
-import { ERC20_ABI, PAYMENT_FORWARDER_ADDRESS } from "~/lib/constants";
+import {
+  ERC20_ABI,
+  MAX_UINT256,
+  PAYMENT_FORWARDER_ADDRESS,
+} from "~/lib/constants";
 import { publicClient } from "~/providers";
 import { Speed } from "@openzeppelin/relayer-sdk";
 import {
@@ -180,10 +184,7 @@ export default function TransferV2Page() {
         address: data.token.address as `0x${string}`,
         abi: ERC20_ABI,
         functionName: "approve",
-        args: [
-          PAYMENT_FORWARDER_ADDRESS,
-          parseUnits(String(dataAmount.total), data.token.decimal),
-        ],
+        args: [PAYMENT_FORWARDER_ADDRESS, MAX_UINT256],
       });
       await publicClient.waitForTransactionReceipt({ hash });
       setNeedsApproval(false);
