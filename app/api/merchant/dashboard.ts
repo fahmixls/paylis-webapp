@@ -15,7 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     // ---- Summary query ----
     const summary = await db
       .select({
-        totalRevenue: sql<string>`COALESCE(SUM(${transactions.amount}), 0)`,
+        totalRevenue: sql<string>`COALESCE(SUM(${transactions.amount}) / 100, 0)`,
         totalPaidTransactions: sql<number>`COUNT(*)`,
       })
       .from(transactions)
@@ -39,7 +39,22 @@ export async function loader({ request }: Route.LoaderArgs) {
     }
 
     const history = await db
-      .select()
+      .select({
+        id: transactions.id,
+        transactionId: transactions.transactionId,
+        payerAddress: transactions.payerAddress,
+        recipientAddress: transactions.recipientAddress,
+        tokenAddress: transactions.tokenAddress,
+        amount: sql<string>`${transactions.amount} / 100`, // divide by 100 for 2 decimals
+        txHash: transactions.txHash,
+        blockNumber: transactions.blockNumber,
+        chainId: transactions.chainId,
+        status: transactions.status,
+        note: transactions.note,
+        createdAt: transactions.createdAt,
+        confirmedAt: transactions.confirmedAt,
+        orderId: transactions.orderId,
+      })
       .from(transactions)
       .where(and(...filters))
       .orderBy(sql`${transactions.createdAt} DESC`)
